@@ -28,8 +28,7 @@ except ImportError:
 class GoogleCSE(callbacks.Plugin):
     threaded = True
     callBefore = ['Web']
-    #regexps = ['googleSnarfer']
-    
+
     def g(self, irc, msg, args, query):
         """Uses Google Custom Search Engine to perform queries against Google's API"""
         
