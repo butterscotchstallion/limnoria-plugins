@@ -35,7 +35,7 @@ conf.registerGlobalValue(GoogleCSE, 'searchEngineID',
 
 # Safe search filter.
 conf.registerGlobalValue(GoogleCSE, 'searchFilter',
-     registry.String("moderate", _("""Safe search filter""")))
+     registry.String("medium", _("""Safe search filter""")))
 
 # This is the baseURL used, verbatim. No protocols are prepended.
 # I set it up this way so that if the URL needs to change in the future
