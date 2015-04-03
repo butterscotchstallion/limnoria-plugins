@@ -12,6 +12,7 @@ import supybot.ircutils as ircutils
 import supybot.callbacks as callbacks
 import urllib
 import json
+import locale
 
 try:
     from supybot.i18n import PluginInternationalization
@@ -27,6 +28,7 @@ class TubeSleuth(callbacks.Plugin):
 
     def yt(self, irc, msg, args, query):
         """Queries Youtube API"""
+        locale.setlocale(locale.LC_ALL, 'en_US.utf8')
         baseURL = self.registryValue('baseURL')
         noResultsMessage = self.registryValue('noResultsMessage')
         headers = dict(utils.web.defaultHeaders)
@@ -53,16 +55,17 @@ class TubeSleuth(callbacks.Plugin):
                     video = entries[0]
                     id = video["media$group"]['yt$videoid']['$t']
                     title = video['title']['$t']
+                    views = video['yt$statistics']['viewCount']
                     
-                    result = "https://youtu.be/%s - %s" % (id, title)
-                    
-            except KeyError as e:
-                self.log.info(str(e))
+                    result = "https://youtu.be/%s :: %s" % (id, ircutils.bold(title))
+
+            except KeyError, e:
+                self.log.info(e)
                 
                 pass
             
-        except:
-            self.log.error("TubeSleuth HTTP error")
+        except Exception, err:
+            self.log.error(err)
         
         if result:
             irc.reply(result)
