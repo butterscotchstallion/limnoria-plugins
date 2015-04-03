@@ -15,7 +15,6 @@ except:
     # without the i18n module
     _ = lambda x: x
 
-
 def configure(advanced):
     # This will be called by supybot to configure this module.  advanced is
     # a bool that specifies whether the user identified themself as an advanced
@@ -26,9 +25,33 @@ def configure(advanced):
 
 
 GoogleCSE = conf.registerPlugin('GoogleCSE')
-# This is where your configuration variables (if any) should go.  For example:
-# conf.registerGlobalValue(GoogleCSE, 'someConfigVariableName',
-#     registry.Boolean(False, _("""Help for someConfigVariableName.""")))
 
+# This is the baseURL used, verbatim. No protocols are prepended.
+# I set it up this way so that if the URL needs to change in the future
+# for some reason, it would be easy to do that.
+conf.registerGlobalValue(GoogleCSE, 'baseURL',
+     registry.Boolean("https://www.googleapis.com/customsearch/v1", _("""Base search URL including protocol.""")))
 
+conf.registerGlobalValue(GoogleCSE, 'apiKey',
+     registry.Boolean("", _("""Google API key""")))
+     
+conf.registerGlobalValue(GoogleCSE, 'searchEngineID',
+     registry.Boolean("", _("""Google search engine ID""")))
+
+conf.registerGlobalValue(GoogleCSE, 'searchFilter',
+     registry.Boolean("moderate", _("""Safe search filter""")))
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
 # vim:set shiftwidth=4 tabstop=4 expandtab textwidth=79:

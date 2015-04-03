@@ -34,18 +34,8 @@ class GoogleCSE(callbacks.Plugin):
         key = self.registryValue('apiKey')
         cx = self.registryValue('searchEngineID')
         baseURL = self.registryValue('baseURL')
-        maximumResults = self.registryValue('maximumResults')
         searchFilter = self.registryValue('searchFilter')
-        
-        if not searchFilter:
-            searchFilter = "moderate"
-        
-        if not maximumResults:
-            maximumResults = 1
-            
-        if not baseURL:
-            baseURL = "https://www.googleapis.com/customsearch/v1"
-        
+
         # API key required
         if not key:
             raise callbacks.Error('GoogleCSE: invalid API key')
@@ -56,7 +46,7 @@ class GoogleCSE(callbacks.Plugin):
         
         # Available options: https://developers.google.com/custom-search/json-api/v1/reference/cse/list
         opts = {'q': query, 'key': key, \
-                'cx': cx, 'num': maximumResults, \
+                'cx': cx, 'num': 1, \
                 'safe': searchFilter, 'alt': 'json'}
         
         searchURL = '%s?%s' % (baseURL, urllib.urlencode(opts))
@@ -97,25 +87,7 @@ class GoogleCSE(callbacks.Plugin):
             irc.reply(_('No results'))
     
     g = wrap(g, ['text'])
-    
-    """
-    def googleSnarfer(self, irc, msg, match):
-        r"^google\s+(.*)$"
-        
-        if not self.registryValue('searchSnarfer', msg.args[0]):
-            return
-        
-        searchString = match.group(1)
-        
-        url = self.g(searchString)
-        
-        if url:
-            irc.reply(url, prefixNick=False)
-        else:
-            self.log.warning("GoogleCSE: blank link returned")
-                
-    googleSnarfer = urlSnarfer(googleSnarfer)
-    """
+
 Class = GoogleCSE
 
 
