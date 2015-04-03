@@ -47,16 +47,18 @@ class TubeSleuth(callbacks.Plugin):
             # Check if we have any results
             try:
                 # Maximum of one result, so the first one is the video
-                entries = data.feed.entry
+                entries = data['feed']['entry']
                 
                 if entries:
                     video = entries[0]
-                    id = video['yt$videoid']['$t']
+                    id = video["media$group"]['yt$videoid']['$t']
                     title = video['title']['$t']
                     
                     result = "https://youtu.be/%s - %s" % (id, title)
                     
-            except KeyError:
+            except KeyError as e:
+                self.log.info(str(e))
+                
                 pass
             
         except:
