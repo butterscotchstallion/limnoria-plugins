@@ -27,21 +27,21 @@ GoogleCSE = conf.registerPlugin('GoogleCSE')
 
 # Google API key. Required.
 conf.registerGlobalValue(GoogleCSE, 'apiKey',
-     registry.Boolean("", _("""Google API key""")))
+     registry.String("", _("""Google API key""")))
 
 # Google search engine ID. Required.
 conf.registerGlobalValue(GoogleCSE, 'searchEngineID',
-     registry.Boolean("", _("""Google search engine ID""")))
+     registry.String("", _("""Google search engine ID""")))
 
 # Safe search filter.
 conf.registerGlobalValue(GoogleCSE, 'searchFilter',
-     registry.Boolean("moderate", _("""Safe search filter""")))
+     registry.String("moderate", _("""Safe search filter""")))
 
 # This is the baseURL used, verbatim. No protocols are prepended.
 # I set it up this way so that if the URL needs to change in the future
 # for some reason, it would be easy to do that.
 conf.registerGlobalValue(GoogleCSE, 'baseURL',
-     registry.Boolean("https://www.googleapis.com/customsearch/v1", _("""Base search URL including protocol.""")))
+     registry.String("https://www.googleapis.com/customsearch/v1", _("""Base search URL including protocol.""")))
 
      
      
