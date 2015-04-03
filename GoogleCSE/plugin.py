@@ -88,7 +88,8 @@ class GoogleCSE(callbacks.Plugin):
                 
                 # Return the first link
                 if items:
-                    result = items[0]['link']
+                    item = items[0]
+                    result = "%s :: %s" % (item['link'], item['title'])
             except:
                 pass
         
