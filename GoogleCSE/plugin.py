@@ -29,13 +29,20 @@ class GoogleCSE(callbacks.Plugin):
     
     @internationalizeDocstring
     def g(self, irc, msg, args, query):
-        """Uses Google Custom Search Engine to perform queries against Google's API"""    
+        """Uses Google Custom Search Engine to perform queries against Google's API"""
+        
+        # Make sure we have a search query first. Seems it just shows the help text 
+        # in this case.
+        if not query:
+            irc.reply(_("Please provide a search query."))
+            return
+        
         headers = dict(utils.web.defaultHeaders)
         key = self.registryValue('apiKey')
         cx = self.registryValue('searchEngineID')
         baseURL = self.registryValue('baseURL')
         searchFilter = self.registryValue('searchFilter')
-
+        
         # API key required
         if not key:
             raise callbacks.Error('GoogleCSE: invalid API key')
@@ -51,8 +58,9 @@ class GoogleCSE(callbacks.Plugin):
         
         searchURL = '%s?%s' % (baseURL, urllib.urlencode(opts))
         
-        # Log URL we're using for debugging
-        self.log.info("GoogleCSE URL: %s" % (searchURL))
+        # Show URL in debug mode. Note: this includes the API key, which could be
+        # considered sensitive information.
+        self.log.debug("GoogleCSE URL: %s" % (searchURL))
         
         # Initialize result
         result = False
@@ -71,12 +79,17 @@ class GoogleCSE(callbacks.Plugin):
             except KeyError:
                 pass
             
-            # Search results
-            items = data['items']
-            
-            # Return the first link
-            if items:
-                result = items[0]['link']
+            # If there are no results, there will not be a data['items']
+            # In that case, there are no results
+            try:
+                # Search results
+                items = data['items']
+                
+                # Return the first link
+                if items:
+                    result = items[0]['link']
+            except:
+                pass
         
         except utils.web.Error as e:
             self.log.error("GoogleCSE HTTPError: %s" % (str(e)))
@@ -84,7 +97,7 @@ class GoogleCSE(callbacks.Plugin):
         if result:
             irc.reply(result)
         else:
-            irc.reply(_('No results'))
+            irc.reply(_('No results for that query.'))
     
     g = wrap(g, ['text'])
 
