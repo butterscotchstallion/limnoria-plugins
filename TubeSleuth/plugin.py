@@ -32,6 +32,7 @@ class TubeSleuth(callbacks.Plugin):
         baseURL = self.registryValue('baseURL')
         noResultsMessage = self.registryValue('noResultsMessage')
         headers = dict(utils.web.defaultHeaders)
+        useBold = self.registryValue('useBold')
         
         opts = {'q': query, 'alt': 'json', 'v': 2, 'max-results': 1}
         
@@ -57,7 +58,10 @@ class TubeSleuth(callbacks.Plugin):
                     title = video['title']['$t']
                     views = video['yt$statistics']['viewCount']
                     
-                    result = "https://youtu.be/%s :: %s" % (id, ircutils.bold(title))
+                    if useBold and title:
+                        title = ircutils.bold(title)
+                    
+                    result = "https://youtu.be/%s :: %s" % (id, title)
 
             except KeyError, e:
                 self.log.info(e)
