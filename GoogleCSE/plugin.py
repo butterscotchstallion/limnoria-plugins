@@ -27,7 +27,6 @@ class GoogleCSE(callbacks.Plugin):
     callBefore = ['Web']
     #regexps = ['googleSnarfer']
     
-    @internationalizeDocstring
     def g(self, irc, msg, args, query):
         """Uses Google Custom Search Engine to perform queries against Google's API"""
         
