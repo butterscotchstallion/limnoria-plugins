@@ -43,6 +43,7 @@ class GoogleCSE(callbacks.Plugin):
         cx = self.registryValue('searchEngineID')
         baseURL = self.registryValue('baseURL')
         searchFilter = self.registryValue('searchFilter')
+        useBold = self.registryValue('useBold')
         
         # API key required
         if not key:
@@ -89,14 +90,19 @@ class GoogleCSE(callbacks.Plugin):
                 # Return the first link
                 if items:
                     item = items[0]
-                    result = "%s :: %s" % (item['link'], item['title'])
+                    title = item['title']                   
+                    
+                    if useBold and title:
+                        title = ircutils.bold(title)
+                    
+                    result = "%s :: %s" % (item['link'], title)
             except:
                 pass
         
         except utils.web.Error as e:
             self.log.error("GoogleCSE HTTPError: %s" % (str(e)))
         
-        if result:
+        if result:                
             irc.reply(result)
         else:
             irc.reply(_('No results for that query.'))

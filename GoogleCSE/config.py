@@ -43,7 +43,8 @@ conf.registerGlobalValue(GoogleCSE, 'searchFilter',
 conf.registerGlobalValue(GoogleCSE, 'baseURL',
      registry.String("https://www.googleapis.com/customsearch/v1", _("""Base search URL including protocol.""")))
 
-     
+conf.registerGlobalValue(GoogleCSE, 'useBold',
+     registry.Boolean(False, _("""Use bold in replies""")))
      
      
      
