@@ -24,8 +24,7 @@ except ImportError:
 
 class TubeSleuth(callbacks.Plugin):
     threaded = True
-    callBefore = ['Web']
-
+    
     def yt(self, irc, msg, args, query):
         """Queries Youtube API"""
         locale.setlocale(locale.LC_ALL, 'en_US.utf8')
@@ -65,8 +64,6 @@ class TubeSleuth(callbacks.Plugin):
 
             except KeyError, e:
                 self.log.info(e)
-                
-                pass
             
         except Exception, err:
             self.log.error(err)
@@ -74,7 +71,7 @@ class TubeSleuth(callbacks.Plugin):
         if result:
             irc.reply(result)
         else:
-            irc.reply(_(noResultsMessage))
+            irc.reply(noResultsMessage)
         
     yt = wrap(yt, ['text'])
 
