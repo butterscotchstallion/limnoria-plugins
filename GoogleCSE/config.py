@@ -46,6 +46,12 @@ conf.registerGlobalValue(GoogleCSE, 'baseURL',
 conf.registerGlobalValue(GoogleCSE, 'useBold',
      registry.Boolean(False, _("""Use bold in replies""")))
 
+conf.registerGlobalValue(GoogleCSE, 'noSearchEngineIDMessage',
+     registry.String("No search engine ID configured", _("""Message to send when there is no search engine ID configured""")))
+     
+conf.registerGlobalValue(GoogleCSE, 'noAPIKeyMessage',
+     registry.String("No API key configured", _("""Message to send when there is no API key configured""")))
+     
 conf.registerGlobalValue(GoogleCSE, 'noResultsMessage',
      registry.String("No results for that query.", _("""Message to send when there are no results""")))
      

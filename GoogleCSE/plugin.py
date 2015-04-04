@@ -35,7 +35,6 @@ class GoogleCSE(callbacks.Plugin):
         # Make sure we have a search query first. Seems it just shows the help text 
         # in this case.
         if not query:
-            irc.reply(_("Please provide a search query."))
             return
         
         key = self.registryValue('apiKey')
@@ -44,14 +43,20 @@ class GoogleCSE(callbacks.Plugin):
         searchFilter = self.registryValue('searchFilter')
         useBold = self.registryValue('useBold')
         noResultsMessage = self.registryValue('noResultsMessage')
+        noAPIKeyMessage = self.registryValue('noAPIKeyMessage')
+        noSearchEngineIDMessage = self.registryValue('noSearchEngineIDMessage')
         
         # API key required
         if not key:
-            raise callbacks.Error('GoogleCSE: invalid API key')
+            irc.error(noAPIKeyMessage)
+            self.log.error('GoogleCSE: %s' % (noAPIKeyMessage))
+            return
         
         # Search engine ID required
         if not cx:
-            raise callbacks.Error('GoogleCSE: invalid search engine ID')
+            irc.error(noSearchEngineIDMessage)
+            self.log.error('GoogleCSE: %s' % (noSearchEngineIDMessage))
+            return
         
         # Available options: https://developers.google.com/custom-search/json-api/v1/reference/cse/list
         opts = {'q': query, 'key': key, \
