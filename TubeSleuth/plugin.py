@@ -29,8 +29,13 @@ class TubeSleuth(callbacks.Plugin):
         baseURL = self.registryValue('baseURL')
         noResultsMessage = self.registryValue('noResultsMessage')
         useBold = self.registryValue('useBold')
+        safeSearch = self.registryValue('safeSearch')
         
-        opts = {'q': query, 'alt': 'json', 'v': 2, 'max-results': 1}
+        opts = {'q': query, 
+                'alt': 'json', 
+                'v': 2, 
+                'max-results': 1,
+                'safeSearch': safeSearch}
         
         searchURL = '%s?%s' % (baseURL, urllib.urlencode(opts))
         

@@ -34,5 +34,8 @@ conf.registerGlobalValue(TubeSleuth, 'baseURL',
 
 conf.registerGlobalValue(TubeSleuth, 'noResultsMessage',
      registry.String("No results for that query", _("""Message reply when there are no results""")))
+
+conf.registerGlobalValue(TubeSleuth, 'safeSearch',
+     registry.String("moderate", _("""Safe search filtering: none, moderate, strict""")))
      
 # vim:set shiftwidth=4 tabstop=4 expandtab textwidth=79:
