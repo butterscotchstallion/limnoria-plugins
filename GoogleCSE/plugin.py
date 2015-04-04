@@ -38,12 +38,12 @@ class GoogleCSE(callbacks.Plugin):
             irc.reply(_("Please provide a search query."))
             return
         
-        headers = dict(utils.web.defaultHeaders)
         key = self.registryValue('apiKey')
         cx = self.registryValue('searchEngineID')
         baseURL = self.registryValue('baseURL')
         searchFilter = self.registryValue('searchFilter')
         useBold = self.registryValue('useBold')
+        noResultsMessage = self.registryValue('noResultsMessage')
         
         # API key required
         if not key:
@@ -68,7 +68,7 @@ class GoogleCSE(callbacks.Plugin):
         result = False
         
         try:
-            response = utils.web.getUrl(searchURL, headers=headers).decode('utf8')
+            response = utils.web.getUrl(searchURL).decode('utf8')
             
             data = json.loads(response)
             
@@ -76,8 +76,7 @@ class GoogleCSE(callbacks.Plugin):
             try:
                 if data['error']:
                     message = data['error']['message']
-                    self.log.info("GoogleCSE error: %s" % (message))
-                    raise callbacks.Error(message)
+                    self.log.error("GoogleCSE API error: %s" % (message))
             except KeyError:
                 pass
             
@@ -102,10 +101,10 @@ class GoogleCSE(callbacks.Plugin):
         except utils.web.Error as e:
             self.log.error("GoogleCSE HTTPError: %s" % (str(e)))
         
-        if result:                
+        if result:        
             irc.reply(result)
         else:
-            irc.reply(_('No results for that query.'))
+            irc.error(_('No results for that query.'))
     
     g = wrap(g, ['text'])
 

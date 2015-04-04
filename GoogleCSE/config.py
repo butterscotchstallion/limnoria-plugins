@@ -45,6 +45,9 @@ conf.registerGlobalValue(GoogleCSE, 'baseURL',
 
 conf.registerGlobalValue(GoogleCSE, 'useBold',
      registry.Boolean(False, _("""Use bold in replies""")))
+
+conf.registerGlobalValue(GoogleCSE, 'noResultsMessage',
+     registry.String("No results for that query.", _("""Message to send when there are no results""")))
      
      
      
