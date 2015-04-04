@@ -27,7 +27,6 @@ class TubeSleuth(callbacks.Plugin):
     
     def yt(self, irc, msg, args, query):
         """Queries Youtube API"""
-        locale.setlocale(locale.LC_ALL, 'en_US.utf8')
         baseURL = self.registryValue('baseURL')
         noResultsMessage = self.registryValue('noResultsMessage')
         headers = dict(utils.web.defaultHeaders)
