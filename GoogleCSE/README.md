@@ -2,9 +2,11 @@ Uses Google Custom Search Engine to perform queries against Google's API
 
 ## Available Options ##
 
-apiKey - Your Google API key. This is available from the [API console] (https://console.developers.google.com/)
+Both the apiKey and searchEngineID are obtained from the [API console] (https://console.developers.google.com/)
 
-searchEngineID - Search engine ID. Also available from the [API console] (https://console.developers.google.com/)
+apiKey - Your Google API key
+
+searchEngineID - Search engine ID
 
 searchFilter - off, medium or off
 
