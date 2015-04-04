@@ -8,6 +8,6 @@ apiKey - Your Google API key
 
 searchEngineID - Search engine ID
 
-searchFilter - off, medium or off
+searchFilter - high, medium or off
 
 useBold - Whether to bold titles of websites returned
