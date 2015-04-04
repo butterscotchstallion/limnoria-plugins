@@ -109,7 +109,7 @@ class GoogleCSE(callbacks.Plugin):
         if result:        
             irc.reply(result)
         else:
-            irc.error(_('No results for that query.'))
+            irc.error(noResultsMessage)
     
     g = wrap(g, ['text'])
 
