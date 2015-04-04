@@ -12,7 +12,6 @@ import supybot.ircutils as ircutils
 import supybot.callbacks as callbacks
 import urllib
 import json
-import locale
 
 try:
     from supybot.i18n import PluginInternationalization
@@ -29,7 +28,6 @@ class TubeSleuth(callbacks.Plugin):
         """Queries Youtube API"""
         baseURL = self.registryValue('baseURL')
         noResultsMessage = self.registryValue('noResultsMessage')
-        headers = dict(utils.web.defaultHeaders)
         useBold = self.registryValue('useBold')
         
         opts = {'q': query, 'alt': 'json', 'v': 2, 'max-results': 1}
@@ -41,7 +39,7 @@ class TubeSleuth(callbacks.Plugin):
         result = False
         
         try:
-            response = utils.web.getUrl(searchURL, headers=headers).decode('utf8')
+            response = utils.web.getUrl(searchURL).decode('utf8')
             
             data = json.loads(response)
             
@@ -54,18 +52,46 @@ class TubeSleuth(callbacks.Plugin):
                     video = entries[0]
                     id = video["media$group"]['yt$videoid']['$t']
                     title = video['title']['$t']
-                    views = video['yt$statistics']['viewCount']
                     
                     if useBold and title:
                         title = ircutils.bold(title)
                     
                     result = "https://youtu.be/%s :: %s" % (id, title)
-
+                    
+                    # Attempt to get views. Not all videos provide this information
+                    try:
+                        views = video['yt$statistics']['viewCount']
+                        
+                        # If views are available, format with commas
+                        if views:
+                            formattedViews = '{:,}'.format(int(views))
+                            
+                            if useBold and formattedViews:
+                                formattedViews = ircutils.bold(formattedViews)
+                            
+                            result = "%s :: Views: %s" % (result, formattedViews)
+                            
+                    except KeyError, e:
+                        self.log.info("TubeSleuth: failed to get views for %s" % (title))
+                    
+                    # Attempt to get rating
+                    try:
+                        stringRating = video["gd$rating"]["average"]                        
+                        rating = round(int(stringRating), 2)
+                        
+                        if useBold and rating:
+                            rating = ircutils.bold(rating)
+                        
+                        result = "%s :: Rating: %s" % (result, rating)
+                    
+                    except KeyError, e:
+                        self.log.info("TubeSleuth: failed to get rating for %s" % (title))
+                    
             except KeyError, e:
                 self.log.info(e)
             
         except Exception, err:
-            self.log.error(err)
+            self.log.error(str(err))
         
         if result:
             irc.reply(result)
