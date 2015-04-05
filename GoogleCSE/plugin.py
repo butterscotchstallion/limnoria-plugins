@@ -39,41 +39,41 @@ class GoogleCSE(callbacks.Plugin):
         
         key = self.registryValue('apiKey')
         cx = self.registryValue('searchEngineID')
-        baseURL = self.registryValue('baseURL')
-        searchFilter = self.registryValue('searchFilter')
-        useBold = self.registryValue('useBold')
-        noResultsMessage = self.registryValue('noResultsMessage')
-        noAPIKeyMessage = self.registryValue('noAPIKeyMessage')
-        noSearchEngineIDMessage = self.registryValue('noSearchEngineIDMessage')
+        base_url = self.registryValue('baseURL')
+        search_filter = self.registryValue('searchFilter')
+        use_bold = self.registryValue('useBold')
+        no_results_message = self.registryValue('noResultsMessage')
+        no_api_key_message = self.registryValue('noAPIKeyMessage')
+        no_search_engine_id_message = self.registryValue('noSearchEngineIDMessage')
         
         # API key required
         if not key:
-            irc.error(noAPIKeyMessage)
-            self.log.error('GoogleCSE: %s' % (noAPIKeyMessage))
+            irc.error(no_api_key_message)
+            self.log.error('GoogleCSE: %s' % (no_api_key_message))
             return
         
         # Search engine ID required
         if not cx:
-            irc.error(noSearchEngineIDMessage)
-            self.log.error('GoogleCSE: %s' % (noSearchEngineIDMessage))
+            irc.error(no_search_engine_id_message)
+            self.log.error('GoogleCSE: %s' % (no_search_engine_id_message))
             return
         
         # Available options: https://developers.google.com/custom-search/json-api/v1/reference/cse/list
         opts = {'q': query, 'key': key, \
                 'cx': cx, 'num': 1, \
-                'safe': searchFilter, 'alt': 'json'}
+                'safe': search_filter, 'alt': 'json'}
         
-        searchURL = '%s?%s' % (baseURL, urllib.urlencode(opts))
+        search_url = '%s?%s' % (base_url, urllib.urlencode(opts))
         
         # Show URL in debug mode. Note: this includes the API key, which could be
         # considered sensitive information.
-        self.log.debug("GoogleCSE URL: %s" % (searchURL))
+        self.log.debug("GoogleCSE URL: %s" % (search_url))
         
         # Initialize result
         result = False
         
         try:
-            response = utils.web.getUrl(searchURL).decode('utf8')
+            response = utils.web.getUrl(search_url).decode('utf8')
             
             data = json.loads(response)
             
@@ -96,7 +96,7 @@ class GoogleCSE(callbacks.Plugin):
                     item = items[0]
                     title = item['title']                   
                     
-                    if useBold and title:
+                    if use_bold and title:
                         title = ircutils.bold(title)
                     
                     result = "%s :: %s" % (item['link'], title)
@@ -109,7 +109,7 @@ class GoogleCSE(callbacks.Plugin):
         if result:        
             irc.reply(result)
         else:
-            irc.error(noResultsMessage)
+            irc.error(no_results_message)
     
     g = wrap(g, ['text'])
 
