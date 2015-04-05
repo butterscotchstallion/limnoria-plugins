@@ -172,7 +172,7 @@ class Cayenne(callbacks.Plugin):
                 throttled = False
             
             if triggered is not None:
-                self.debug.info("Cayenne triggered because message contained %s" % (triggered))
+                self.log.debug("Cayenne triggered because message contained %s" % (triggered))
                 
                 if throttled:                    
                     self.log.info("Cayenne throttled. Not meowing: it has been %s seconds" % (seconds))
