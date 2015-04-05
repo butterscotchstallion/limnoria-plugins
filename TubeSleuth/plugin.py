@@ -26,25 +26,25 @@ class TubeSleuth(callbacks.Plugin):
     
     def yt(self, irc, msg, args, query):
         """Queries Youtube API"""
-        baseURL = self.registryValue('baseURL')
-        noResultsMessage = self.registryValue('noResultsMessage')
-        useBold = self.registryValue('useBold')
-        safeSearch = self.registryValue('safeSearch')
+        base_url = self.registryValue('baseURL')
+        no_results_message = self.registryValue('noResultsMessage')
+        use_bold = self.registryValue('useBold')
+        safe_search = self.registryValue('safeSearch')
         
         opts = {'q': query, 
                 'alt': 'json', 
                 'v': 2, 
                 'max-results': 1,
-                'safeSearch': safeSearch}
+                'safeSearch': safe_search}
         
-        searchURL = '%s?%s' % (baseURL, urllib.urlencode(opts))
+        search_url = '%s?%s' % (base_url, urllib.urlencode(opts))
         
-        self.log.info("TubeSleuth URL: %s" % (searchURL))
+        self.log.info("TubeSleuth URL: %s" % (search_url))
         
         result = False
         
         try:
-            response = utils.web.getUrl(searchURL).decode('utf8')
+            response = utils.web.getUrl(search_url).decode('utf8')
             
             data = json.loads(response)
             
@@ -58,7 +58,7 @@ class TubeSleuth(callbacks.Plugin):
                     id = video["media$group"]['yt$videoid']['$t']
                     title = video['title']['$t']
                     
-                    if useBold and title:
+                    if use_bold and title:
                         title = ircutils.bold(title)
                     
                     result = "https://youtu.be/%s :: %s" % (id, title)
@@ -69,22 +69,22 @@ class TubeSleuth(callbacks.Plugin):
                         
                         # If views are available, format with commas
                         if views:
-                            formattedViews = '{:,}'.format(int(views))
+                            formatted_views = '{:,}'.format(int(views))
                             
-                            if useBold and formattedViews:
-                                formattedViews = ircutils.bold(formattedViews)
+                            if use_bold and formatted_views:
+                                formatted_views = ircutils.bold(formatted_views)
                             
-                            result = "%s :: Views: %s" % (result, formattedViews)
+                            result = "%s :: Views: %s" % (result, formatted_views)
                             
                     except KeyError, e:
                         self.log.info("TubeSleuth: failed to get views for %s" % (title))
                     
                     # Attempt to get rating
                     try:
-                        stringRating = video["gd$rating"]["average"]                        
-                        rating = round(int(stringRating), 2)
+                        json_rating = video["gd$rating"]["average"]                        
+                        rating = round(int(json_rating), 2)
                         
-                        if useBold and rating:
+                        if use_bold and rating:
                             rating = ircutils.bold(rating)
                         
                         result = "%s :: Rating: %s" % (result, rating)
@@ -101,7 +101,7 @@ class TubeSleuth(callbacks.Plugin):
         if result:
             irc.reply(result)
         else:
-            irc.reply(noResultsMessage)
+            irc.reply(no_results_message)
         
     yt = wrap(yt, ['text'])
 
