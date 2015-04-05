@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
-###
-# Copyright (c) 2015, PrgmrBill
-# All rights reserved.
-#
-#
-###
+"""
+Cayenne - Displays cat facts or cat gifs based on probability
 
+Copyright (c) 2015, PrgmrBill
+All rights reserved.
+"""
 import supybot.utils as utils
 from supybot.commands import *
-import supybot.plugins as plugins
-import supybot.ircutils as ircutils
 import supybot.callbacks as callbacks
 import random
 import datetime
@@ -25,9 +22,12 @@ except ImportError:
 class Cayenne(callbacks.Plugin):
     """Displays cat facts or cat gifs based on probability"""
     threaded = True
-    lastMessage = False
+    last_message_timestamp = False
     
-    def getFact(self):
+    def get_fact(self):
+        """
+        Get a random cat fact
+        """
         facts = ("Cats often overract to unexpected stimuli because of their extremely sensitive nervous system.",
         "You check your cats pulse on the inside of the back thigh, where the leg joins to the body. Normal for cats: 110-170 beats per minute.",
         "When a cats rubs up against you, the cat is marking you with it's scent claiming ownership.",
@@ -131,43 +131,54 @@ class Cayenne(callbacks.Plugin):
         
         return random.choice(facts)
     
-    def containsTriggerWord(self, message):
+    def message_contains_trigger_word(self, message):
+        """
+        Check prefined list of trigger words and return
+        which one was found, if any
+        """
         words = self.registryValue('triggerWords')
         
-        for w in words:
-            if w in message:
-                return w
+        for word in words:
+            if word in message:
+                return word
     
-    def getLink(self):
+    def get_link(self):
+        """
+        Query cat URL to get a random link
+        """
         try:
-            linkURL = self.registryValue('linkURL')
-            response = utils.web.getUrl(linkURL).decode('utf8')
+            link_url = self.registryValue('linkURL')
+            response = utils.web.getUrl(link_url).decode('utf8')
             
+            # Expecting a link
             if "http" in response:
                 return response
             else:
                 self.log.error("Cayenne: received unexpected response from cat URL: %s" % (response))
             
-        except HTTPError, e:
-            self.log.exception(str(e))
+        except:
+            self.log.exception("Cayenne: error fetching cat URL")
     
     def doPrivmsg(self, irc, msg):
+        """
+        Checks each channel message to see if it contains a trigger word
+        """
         channel = msg.args[0]
-        isChannel = irc.isChannel(channel)
+        is_channel = irc.isChannel(channel)
         
         # Only react to messages in a channel
-        if isChannel:
+        if is_channel:
             message = msg.args[1]
-            factChance = int(self.registryValue('factChance'))
-            linkChance = int(self.registryValue('linkChance'))            
-            throttleInSeconds = int(self.registryValue('throttleInSeconds'))
-            triggered = self.containsTriggerWord(message)
-            now       = datetime.datetime.now()
+            fact_chance = int(self.registryValue('factChance'))
+            link_chance = int(self.registryValue('linkChance'))            
+            throttle_seconds = int(self.registryValue('throttleInSeconds'))
+            triggered = self.message_contains_trigger_word(message)
+            now = datetime.datetime.now()
             seconds = 0
             
-            if self.lastMessage:                
-                seconds = (now - self.lastMessage).total_seconds()
-                throttled = seconds < throttleInSeconds
+            if self.last_message_timestamp:                
+                seconds = (now - self.last_message_timestamp).total_seconds()
+                throttled = seconds < throttle_seconds
             else:
                 throttled = False
             
@@ -177,17 +188,17 @@ class Cayenne(callbacks.Plugin):
                 if throttled:                    
                     self.log.info("Cayenne throttled. Not meowing: it has been %s seconds" % (seconds))
                 else:
-                    factRand = random.randrange(0, 100) < factChance
-                    linkRand = random.randrange(0, 100) < linkChance
+                    fact_rand = random.randrange(0, 100) < fact_chance
+                    link_rand = random.randrange(0, 100) < link_chance
                     
-                    if factRand or linkRand:
-                        self.lastMessage = now
+                    if fact_rand or link_rand:
+                        self.last_message_timestamp = now
                         
-                        if factRand:
-                            output = self.getFact()
+                        if fact_rand:
+                            output = self.get_fact()
                         
-                        if linkRand:
-                            output = self.getLink()
+                        if link_rand:
+                            output = self.get_link()
                         
                         if output:
                             irc.reply(output)
@@ -197,17 +208,3 @@ class Cayenne(callbacks.Plugin):
 Class = Cayenne
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-# vim:set shiftwidth=4 softtabstop=4 expandtab textwidth=79:
