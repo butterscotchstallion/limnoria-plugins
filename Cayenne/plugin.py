@@ -132,7 +132,7 @@ class Cayenne(callbacks.Plugin):
         return random.choice(facts)
     
     def containsTriggerWord(self, message):
-        words = ('meow', 'cat', 'aww', 'kitten', 'feline')
+        words = self.registryValue('triggerWords')
         
         for w in words:
             if w in message:
@@ -145,6 +145,8 @@ class Cayenne(callbacks.Plugin):
             
             if "http" in response:
                 return response
+            else:
+                self.log.error("Cayenne: received unexpected response from cat URL: %s" % (response))
             
         except HTTPError, e:
             self.log.exception(str(e))
@@ -163,14 +165,14 @@ class Cayenne(callbacks.Plugin):
             now       = datetime.datetime.now()
             seconds = 0
             
-            if self.lastMessage:
-                throttled = seconds < throttleInSeconds
+            if self.lastMessage:                
                 seconds = (now - self.lastMessage).total_seconds()
+                throttled = seconds < throttleInSeconds
             else:
                 throttled = False
             
             if triggered is not None:
-                self.log.info("Cayenne triggered because message contained %s" % (triggered))
+                self.debug.info("Cayenne triggered because message contained %s" % (triggered))
                 
                 if throttled:                    
                     self.log.info("Cayenne throttled. Not meowing: it has been %s seconds" % (seconds))

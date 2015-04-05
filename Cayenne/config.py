@@ -38,4 +38,7 @@ conf.registerGlobalValue(Cayenne, 'linkURL',
 conf.registerGlobalValue(Cayenne, 'throttleInSeconds',
                         registry.Integer(60, _("""Will only trigger if it has been X seconds since the last trigger""")))
 
+conf.registerGlobalValue(Cayenne, 'triggerWords',
+                        registry.CommaSeparatedListOfStrings("meow,cat,aww,kitten,feline", _("""List of words that may trigger facts or links""")))
+         
 # vim:set shiftwidth=4 tabstop=4 expandtab textwidth=79:
