@@ -200,13 +200,13 @@ class Cayenne(callbacks.Plugin):
                 if triggered is not False:
                     self.log.debug("Cayenne triggered because message contained %s" % (triggered))
                     
-                    if throttled:                    
-                        self.log.info("Cayenne throttled. Not meowing: it has been %s seconds" % (seconds))
-                    else:
-                        fact_rand = random.randrange(0, 100) < fact_chance
-                        link_rand = random.randrange(0, 100) < link_chance
-                        
-                        if fact_rand or link_rand:
+                    fact_rand = random.randrange(0, 100) < fact_chance
+                    link_rand = random.randrange(0, 100) < link_chance
+                    
+                    if fact_rand or link_rand:
+                        if throttled:                    
+                            self.log.info("Cayenne throttled. Not meowing: it has been %s seconds" % (seconds))
+                        else:
                             self.last_message_timestamp = now
                             
                             if fact_rand:
