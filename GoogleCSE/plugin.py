@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ###
 # 
 # GoogleCSE plugin - Uses Google Custom Search Engine to perform queries
