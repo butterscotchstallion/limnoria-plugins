@@ -7,6 +7,7 @@ All rights reserved.
 """
 import supybot.utils as utils
 from supybot.commands import *
+import supybot.ircmsgs as ircmsgs
 import supybot.callbacks as callbacks
 import random
 import datetime
@@ -173,11 +174,15 @@ class Cayenne(callbacks.Plugin):
         """
         channel = msg.args[0]
         is_channel = irc.isChannel(channel)
+        is_ctcp = ircmsgs.isCtcp(msg)        
+        message = msg.args[1]
         
-        # Only react to messages in a channel
-        if is_channel:
-            message = msg.args[1]
-            
+        # Check origin nick to make sure the trigger
+        # didn't come from the bot.
+        origin_nick = msg.nick
+        
+        # Only react to messages/actions in a channel
+        if is_channel and not is_ctcp:            
             if type(message) is str and len(message):
                 fact_chance = int(self.registryValue('factChance'))
                 link_chance = int(self.registryValue('linkChance'))            
@@ -192,7 +197,7 @@ class Cayenne(callbacks.Plugin):
                 else:
                     throttled = False
                 
-                if triggered is not None:
+                if triggered is not False:
                     self.log.debug("Cayenne triggered because message contained %s" % (triggered))
                     
                     if throttled:                    
