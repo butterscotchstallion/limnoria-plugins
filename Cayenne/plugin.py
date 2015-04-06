@@ -136,12 +136,20 @@ class Cayenne(callbacks.Plugin):
         Check prefined list of trigger words and return
         which one was found, if any
         """
-        words = self.registryValue('triggerWords')
+        word_string = self.registryValue('triggerWords')
         
-        for word in words:
-            if word in message:
-                return word
-    
+        if word_string:
+            words = [word.strip() for word in word_string]
+            
+            if words:
+                for word in words:
+                    if word in message:
+                        return word
+            else:
+                self.log.error("Cayenne: no trigger words set apparently")
+        
+        return False
+        
     def get_link(self):
         """
         Query cat URL to get a random link
@@ -169,41 +177,43 @@ class Cayenne(callbacks.Plugin):
         # Only react to messages in a channel
         if is_channel:
             message = msg.args[1]
-            fact_chance = int(self.registryValue('factChance'))
-            link_chance = int(self.registryValue('linkChance'))            
-            throttle_seconds = int(self.registryValue('throttleInSeconds'))
-            triggered = self.message_contains_trigger_word(message)
-            now = datetime.datetime.now()
-            seconds = 0
             
-            if self.last_message_timestamp:                
-                seconds = (now - self.last_message_timestamp).total_seconds()
-                throttled = seconds < throttle_seconds
-            else:
-                throttled = False
-            
-            if triggered is not None:
-                self.log.debug("Cayenne triggered because message contained %s" % (triggered))
+            if type(message) is str and len(message):
+                fact_chance = int(self.registryValue('factChance'))
+                link_chance = int(self.registryValue('linkChance'))            
+                throttle_seconds = int(self.registryValue('throttleInSeconds'))
+                triggered = self.message_contains_trigger_word(message)
+                now = datetime.datetime.now()
+                seconds = 0
                 
-                if throttled:                    
-                    self.log.info("Cayenne throttled. Not meowing: it has been %s seconds" % (seconds))
+                if self.last_message_timestamp:                
+                    seconds = (now - self.last_message_timestamp).total_seconds()
+                    throttled = seconds < throttle_seconds
                 else:
-                    fact_rand = random.randrange(0, 100) < fact_chance
-                    link_rand = random.randrange(0, 100) < link_chance
+                    throttled = False
+                
+                if triggered is not None:
+                    self.log.debug("Cayenne triggered because message contained %s" % (triggered))
                     
-                    if fact_rand or link_rand:
-                        self.last_message_timestamp = now
+                    if throttled:                    
+                        self.log.info("Cayenne throttled. Not meowing: it has been %s seconds" % (seconds))
+                    else:
+                        fact_rand = random.randrange(0, 100) < fact_chance
+                        link_rand = random.randrange(0, 100) < link_chance
                         
-                        if fact_rand:
-                            output = self.get_fact()
-                        
-                        if link_rand:
-                            output = self.get_link()
-                        
-                        if output:
-                            irc.reply(output)
-                        else:
-                            self.log.error("Cayenne: error retrieving output")
+                        if fact_rand or link_rand:
+                            self.last_message_timestamp = now
+                            
+                            if fact_rand:
+                                output = self.get_fact()
+                            
+                            if link_rand:
+                                output = self.get_link()
+                            
+                            if output:
+                                irc.reply(output)
+                            else:
+                                self.log.error("Cayenne: error retrieving output")
     
 Class = Cayenne
 
