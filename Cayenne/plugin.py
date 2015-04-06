@@ -137,14 +137,14 @@ class Cayenne(callbacks.Plugin):
         Check prefined list of trigger words and return
         which one was found, if any
         """
-        word_string = self.registryValue('triggerWords')
+        words = self.registryValue('triggerWords')
         
-        if word_string:
-            words = [word.strip() for word in word_string]
+        if words:
+            words = [word.strip() for word in words]
             
             if words:
                 for word in words:
-                    if word in message:
+                    if word and word in message:
                         return word
             else:
                 self.log.error("Cayenne: no trigger words set apparently")
@@ -216,7 +216,7 @@ class Cayenne(callbacks.Plugin):
                                 output = self.get_link()
                             
                             if output:
-                                irc.reply(output)
+                                irc.sendMsg(ircmsgs.privmsg(channel, output))
                             else:
                                 self.log.error("Cayenne: error retrieving output")
     
