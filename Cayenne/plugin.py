@@ -24,14 +24,14 @@ class Cayenne(callbacks.Plugin):
     """Displays cat facts or cat gifs based on probability"""
     threaded = True
     last_message_timestamp = False
-    
+
     def get_fact(self):
         """
         Get a random cat fact
         """
         facts = ("Cats often overract to unexpected stimuli because of their extremely sensitive nervous system.",
         "You check your cats pulse on the inside of the back thigh, where the leg joins to the body. Normal for cats: 110-170 beats per minute.",
-        "When a cats rubs up against you, the cat is marking you with it's scent claiming ownership.",
+        "When a cats rubs up against you, the cat is marking you with its scent claiming ownership.",
         "An adult cat has 30 teeth, 16 on the top and 14 on the bottom.",
         "Declawing a cat is the same as cutting a human's fingers off at the knuckle. There are several alternatives to a complete declawing, including trimming or a less radical (though more involved) surgery to remove the claws. Preferably, try to train your cat to use a scratching post.",
         "Cats are subject to gum disease and to dental caries. They should have their teeth cleaned by the vet or the cat dentist once a year.",
