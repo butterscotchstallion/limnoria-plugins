@@ -12,6 +12,7 @@
 
 import supybot.utils as utils
 from supybot.commands import *
+import supybot.ircmsgs as ircmsgs
 import supybot.plugins as plugins
 import supybot.ircutils as ircutils
 import supybot.callbacks as callbacks
@@ -32,12 +33,11 @@ class GoogleCSE(callbacks.Plugin):
 
     def g(self, irc, msg, args, query):
         """Uses Google Custom Search Engine to perform queries against Google's API"""
+        channel = msg.args[0]
+        origin_nick = msg.nick
+        is_channel = irc.isChannel(channel)
         
-        # Make sure we have a search query first. Seems it just shows the help text 
-        # in this case.
-        if not query:
-            return
-        
+        # Settings
         key = self.registryValue('apiKey')
         cx = self.registryValue('searchEngineID')
         base_url = self.registryValue('baseURL')
@@ -46,6 +46,23 @@ class GoogleCSE(callbacks.Plugin):
         no_results_message = self.registryValue('noResultsMessage')
         no_api_key_message = self.registryValue('noAPIKeyMessage')
         no_search_engine_id_message = self.registryValue('noSearchEngineIDMessage')
+        respond_to_pm = self.registryValue('respondToPrivateMessages')
+        is_private_message = not is_channel
+        
+        if is_channel:
+            message_destination = channel
+        else:
+            message_destination = origin_nick
+        
+        # Make note of PMs that were sent to bot
+        if is_private_message and not respond_to_pm:
+            self.log.info("GoogleCSE: not responding to PM from %s" % (origin_nick))
+            return
+        
+        # Make sure we have a search query first. Seems it just shows the help text 
+        # in this case.
+        if not query:
+            return
         
         # API key required
         if not key:
@@ -108,7 +125,7 @@ class GoogleCSE(callbacks.Plugin):
             self.log.error("GoogleCSE HTTPError: %s" % (str(e)))
         
         if result:        
-            irc.reply(result)
+            irc.sendMsg(ircmsgs.privmsg(message_destination, result))
         else:
             irc.error(no_results_message)
     

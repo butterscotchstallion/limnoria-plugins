@@ -54,8 +54,9 @@ conf.registerGlobalValue(GoogleCSE, 'noAPIKeyMessage',
      
 conf.registerGlobalValue(GoogleCSE, 'noResultsMessage',
      registry.String("No results for that query.", _("""Message to send when there are no results""")))
-     
-     
+
+conf.registerGlobalValue(GoogleCSE, 'respondToPrivateMessages',
+     registry.Boolean(False, _("""Whether the bot should respond to this command in private messages""")))
      
      
      
