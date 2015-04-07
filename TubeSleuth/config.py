@@ -37,5 +37,8 @@ conf.registerGlobalValue(TubeSleuth, 'noResultsMessage',
 
 conf.registerGlobalValue(TubeSleuth, 'safeSearch',
      registry.String("moderate", _("""Safe search filtering: none, moderate, strict""")))
+
+conf.registerGlobalValue(TubeSleuth, 'respondToPrivateMessages',
+     registry.Boolean(False, _("""Whether the bot should respond to this command in private messages""")))
      
 # vim:set shiftwidth=4 tabstop=4 expandtab textwidth=79:

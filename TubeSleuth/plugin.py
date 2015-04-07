@@ -8,6 +8,7 @@
 
 import supybot.utils as utils
 from supybot.commands import *
+import supybot.ircmsgs as ircmsgs
 import supybot.plugins as plugins
 import supybot.ircutils as ircutils
 import supybot.callbacks as callbacks
@@ -31,6 +32,20 @@ class TubeSleuth(callbacks.Plugin):
         no_results_message = self.registryValue('noResultsMessage')
         use_bold = self.registryValue('useBold')
         safe_search = self.registryValue('safeSearch')
+        respond_to_pm = self.registryValue('respondToPrivateMessages')
+        channel = msg.args[0]
+        origin_nick = msg.nick
+        is_channel = irc.isChannel(channel)
+        is_private_message = not is_channel
+        
+        if is_channel:
+            message_destination = channel
+        else:
+            message_destination = origin_nick
+        
+        if is_private_message and not respond_to_pm:
+            self.log.info("TubeSleuth: not responding to PM from %s" % (origin_nick))
+            return
         
         opts = {'q': query, 
                 'alt': 'json', 
@@ -76,8 +91,8 @@ class TubeSleuth(callbacks.Plugin):
                                 formatted_views = ircutils.bold(formatted_views)
                             
                             result = "%s :: Views: %s" % (result, formatted_views)
-                            
-                    except KeyError, e:
+                    
+                    except KeyError:
                         self.log.info("TubeSleuth: failed to get views for %s" % (title))
                     
                     # Attempt to get rating
@@ -90,7 +105,7 @@ class TubeSleuth(callbacks.Plugin):
                         
                         result = "%s :: Rating: %s" % (result, rating)
                     
-                    except KeyError, e:
+                    except KeyError:
                         self.log.info("TubeSleuth: failed to get rating for %s" % (title))
                     
             except KeyError, e:
@@ -100,9 +115,9 @@ class TubeSleuth(callbacks.Plugin):
             self.log.error(str(err))
         
         if result:
-            irc.reply(result)
+            irc.sendMsg(ircmsgs.privmsg(message_destination, result))
         else:
-            irc.reply(no_results_message)
+            irc.sendMsg(ircmsgs.privmsg(message_destination, no_results_message))
         
     yt = wrap(yt, ['text'])
 
