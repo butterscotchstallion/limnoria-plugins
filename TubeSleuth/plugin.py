@@ -79,6 +79,23 @@ class TubeSleuth(callbacks.Plugin):
                     
                     result = "https://youtu.be/%s :: %s" % (id, title)
                     
+                    # Attempt to get duration
+                    try:
+                        duration_seconds = int(video["media$group"]["yt$duration"]["seconds"])
+                        
+                        if duration_seconds:
+                            m, s = divmod(duration_seconds, 60)
+                            h, m = divmod(m, 60)
+                            duration = "%02d:%02d:%02d" % (h, m, s)
+                            
+                            if use_bold:
+                                duration = ircutils.bold(duration)
+                            
+                            result = "%s :: Duration: %s" % (result, duration)
+                    
+                    except IndexError:
+                        self.log.info("TubeSleuth: failed to get duration for %s" % (title))
+                    
                     # Attempt to get views. Not all videos provide this information
                     try:
                         views = video['yt$statistics']['viewCount']
@@ -92,7 +109,7 @@ class TubeSleuth(callbacks.Plugin):
                             
                             result = "%s :: Views: %s" % (result, formatted_views)
                     
-                    except KeyError:
+                    except IndexError:
                         self.log.info("TubeSleuth: failed to get views for %s" % (title))
                     
                     # Attempt to get rating
@@ -105,10 +122,10 @@ class TubeSleuth(callbacks.Plugin):
                         
                         result = "%s :: Rating: %s" % (result, rating)
                     
-                    except KeyError:
+                    except IndexError:
                         self.log.info("TubeSleuth: failed to get rating for %s" % (title))
                     
-            except KeyError, e:
+            except IndexError, e:
                 self.log.info(e)
             
         except Exception, err:
