@@ -1,11 +1,11 @@
 # TubeSleuth #
 
-Searches Youtube using their public API
+Searches Youtube using their public v2 API
 
 ## Using TubeSleuth ##
 
     !yt snoop dogg pump pump
-    
+
 ### Example output ###
 
     https://youtu.be/q_6wNxMb6xU :: Snoop Dogg - Pump Pump feat. Lil Malik :: Duration: 00:04:41 :: Views: 188,448 :: Rating: 4.0
@@ -16,7 +16,7 @@ Searches Youtube using their public API
 
 Default value: `$link :: $title :: Duration: $duration :: Views: $view_count :: Rating: $rating`
 
-`useBold` - Whether to bold the output
+`useBold` - Whether to bold the output. Default value: `False`
 
 `noResultsMessage` - Reply when there are no results for a search. Default value: `No results for that query`
 
