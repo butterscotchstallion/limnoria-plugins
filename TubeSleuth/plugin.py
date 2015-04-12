@@ -79,9 +79,9 @@ class TubeSleuth(callbacks.Plugin):
                     if use_bold and title:
                         title = ircutils.bold(title)
                     
-                    link = "https://youtu.be/%s" % (id)
-                    
+                    link = "https://youtu.be/%s" % (id)                    
                     template = template.replace("$link", link)
+                    template = template.replace("$title", title)
                     
                     # Attempt to get duration
                     try:
