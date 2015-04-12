@@ -33,6 +33,7 @@ class TubeSleuth(callbacks.Plugin):
         use_bold = self.registryValue('useBold')
         safe_search = self.registryValue('safeSearch')
         respond_to_pm = self.registryValue('respondToPrivateMessages')
+        template = self.registryValue('template')
         channel = msg.args[0]
         origin_nick = msg.nick
         is_channel = irc.isChannel(channel)
@@ -73,11 +74,14 @@ class TubeSleuth(callbacks.Plugin):
                     video = entries[0]
                     id = video["media$group"]['yt$videoid']['$t']
                     title = video['title']['$t']
+                    result = True
                     
                     if use_bold and title:
                         title = ircutils.bold(title)
                     
-                    result = "https://youtu.be/%s :: %s" % (id, title)
+                    link = "https://youtu.be/%s" % (id)
+                    
+                    template = template.replace("$link", link)
                     
                     # Attempt to get duration
                     try:
@@ -91,7 +95,7 @@ class TubeSleuth(callbacks.Plugin):
                             if use_bold:
                                 duration = ircutils.bold(duration)
                             
-                            result = "%s :: Duration: %s" % (result, duration)
+                            template = template.replace("$duration", duration)
                     
                     except IndexError:
                         self.log.info("TubeSleuth: failed to get duration for %s" % (title))
@@ -107,7 +111,7 @@ class TubeSleuth(callbacks.Plugin):
                             if use_bold and formatted_views:
                                 formatted_views = ircutils.bold(formatted_views)
                             
-                            result = "%s :: Views: %s" % (result, formatted_views)
+                            template = template.replace("$view_count", formatted_views)
                     
                     except IndexError:
                         self.log.info("TubeSleuth: failed to get views for %s" % (title))
@@ -120,19 +124,19 @@ class TubeSleuth(callbacks.Plugin):
                         if use_bold and rating:
                             rating = ircutils.bold(rating)
                         
-                        result = "%s :: Rating: %s" % (result, rating)
+                        template = template.replace("$rating", str(rating))
                     
                     except IndexError:
                         self.log.info("TubeSleuth: failed to get rating for %s" % (title))
-                    
+            
             except IndexError, e:
                 self.log.info(e)
-            
+        
         except Exception, err:
             self.log.error(str(err))
         
         if result:
-            irc.sendMsg(ircmsgs.privmsg(message_destination, result))
+            irc.sendMsg(ircmsgs.privmsg(message_destination, template))
         else:
             irc.sendMsg(ircmsgs.privmsg(message_destination, no_results_message))
         

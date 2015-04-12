@@ -26,9 +26,12 @@ def configure(advanced):
 
 TubeSleuth = conf.registerPlugin('TubeSleuth')
 
+conf.registerGlobalValue(TubeSleuth, 'template',
+     registry.String("$link :: $title :: Duration: $duration :: Views: $view_count :: Rating: $rating", _("""Template used for search result replies""")))
+
 conf.registerGlobalValue(TubeSleuth, 'useBold',
      registry.Boolean(False, _("""Use bold in replies""")))
-     
+
 conf.registerGlobalValue(TubeSleuth, 'baseURL',
      registry.String("https://gdata.youtube.com/feeds/api/videos", _("""Base URL for Youtube API""")))
 
