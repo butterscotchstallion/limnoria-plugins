@@ -26,14 +26,17 @@ def configure(advanced):
 
 TubeSleuth = conf.registerPlugin('TubeSleuth')
 
+conf.registerGlobalValue(TubeSleuth, 'developerKey',
+     registry.String("", _("""Google API key. Required.""")))
+
+conf.registerGlobalValue(TubeSleuth, 'sortOrder',
+     registry.String("relevance", _("""The order parameter specifies the method that will be used to order resources in the API response.""")))
+     
 conf.registerGlobalValue(TubeSleuth, 'template',
-     registry.String("$link :: $title :: Duration: $duration :: Views: $view_count :: Rating: $rating", _("""Template used for search result replies""")))
+     registry.String("$link :: $title", _("""Template used for search result replies""")))
 
 conf.registerGlobalValue(TubeSleuth, 'useBold',
      registry.Boolean(False, _("""Use bold in replies""")))
-
-conf.registerGlobalValue(TubeSleuth, 'baseURL',
-     registry.String("https://gdata.youtube.com/feeds/api/videos", _("""Base URL for Youtube API""")))
 
 conf.registerGlobalValue(TubeSleuth, 'noResultsMessage',
      registry.String("No results for that query", _("""Message reply when there are no results""")))
@@ -43,5 +46,5 @@ conf.registerGlobalValue(TubeSleuth, 'safeSearch',
 
 conf.registerGlobalValue(TubeSleuth, 'respondToPrivateMessages',
      registry.Boolean(False, _("""Whether the bot should respond to this command in private messages""")))
-     
+
 # vim:set shiftwidth=4 tabstop=4 expandtab textwidth=79:

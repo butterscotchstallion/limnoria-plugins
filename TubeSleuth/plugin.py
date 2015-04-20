@@ -17,7 +17,7 @@ import json
 
 try:
     from supybot.i18n import PluginInternationalization
-    _ = PluginInternationalization('TubeSleuth')
+    _ = PluginInternationalization("TubeSleuth")
 except ImportError:
     # Placeholder that allows to run the plugin on a bot
     # without the i18n module
@@ -28,16 +28,24 @@ class TubeSleuth(callbacks.Plugin):
     
     def yt(self, irc, msg, args, query):
         """Queries Youtube API"""
-        base_url = self.registryValue('baseURL')
-        no_results_message = self.registryValue('noResultsMessage')
-        use_bold = self.registryValue('useBold')
-        safe_search = self.registryValue('safeSearch')
-        respond_to_pm = self.registryValue('respondToPrivateMessages')
-        template = self.registryValue('template')
+        base_url = "https://www.googleapis.com/youtube/v3/search"
+        no_results_message = self.registryValue("noResultsMessage")
+        use_bold = self.registryValue("useBold")
+        safe_search = self.registryValue("safeSearch")
+        respond_to_pm = self.registryValue("respondToPrivateMessages")
+        template = self.registryValue("template")
+        developer_key = self.registryValue("developerKey")
+        sort_order = self.registryValue("sortOrder")
         channel = msg.args[0]
         origin_nick = msg.nick
         is_channel = irc.isChannel(channel)
         is_private_message = not is_channel
+        
+        if not developer_key:
+            no_key_error_message = "No Google developer key set. Get one at https://code.google.com/apis/youtube/dashboard/gwt/index.html#settings"
+            irc.error(no_key_error_message)
+            self.log.error("TubeSleuth: %s" % (no_key_error_message))
+            return
         
         if is_channel:
             message_destination = channel
@@ -48,104 +56,53 @@ class TubeSleuth(callbacks.Plugin):
             self.log.info("TubeSleuth: not responding to PM from %s" % (origin_nick))
             return
         
-        opts = {'q': query, 
-                'alt': 'json', 
-                'v': 2, 
-                'max-results': 1,
-                'safeSearch': safe_search}
+        opts = {"q": query, 
+                "part": "snippet",
+                "maxResults": 1,
+                "order": sort_order,
+                "key": developer_key,
+                "safeSearch": safe_search}
         
-        search_url = '%s?%s' % (base_url, urllib.urlencode(opts))
+        search_url = "%s?%s" % (base_url, urllib.urlencode(opts))
         
         self.log.info("TubeSleuth URL: %s" % (search_url))
         
         result = False
         
         try:
-            response = utils.web.getUrl(search_url).decode('utf8')
-            
+            response = utils.web.getUrl(search_url).decode("utf8")            
             data = json.loads(response)
             
-            # Check if we have any results
             try:
-                # Maximum of one result, so the first one is the video
-                entries = data['feed']['entry']
+                items = data["items"]
                 
-                if entries:
-                    video = entries[0]
-                    id = video["media$group"]['yt$videoid']['$t']
-                    title = video['title']['$t']
+                if items:
+                    video = items[0]
+                    snippet = video["snippet"]
+                    id = video["id"]["videoId"]
+                    title = snippet["title"]
                     result = True
                     
                     if use_bold and title:
                         title = ircutils.bold(title)
                     
-                    link = "https://youtu.be/%s" % (id)                    
+                    link = "https://youtu.be/%s" % (id)
                     template = template.replace("$link", link)
                     template = template.replace("$title", title)
-                    
-                    # Attempt to get duration
-                    try:
-                        duration_seconds = int(video["media$group"]["yt$duration"]["seconds"])
-                        
-                        if duration_seconds:
-                            m, s = divmod(duration_seconds, 60)
-                            h, m = divmod(m, 60)
-                            
-                            duration = "%02d:%02d" % (m, s)
-                            
-                            # Only include hour if the video is at least 1 hour long
-                            if h > 0:
-                                duration = "%02d:%s" % (h, duration)
-                            
-                            if use_bold:
-                                duration = ircutils.bold(duration)
-                            
-                            template = template.replace("$duration", duration)
-                    
-                    except IndexError:
-                        self.log.info("TubeSleuth: failed to get duration for %s" % (title))
-                    
-                    # Attempt to get views. Not all videos provide this information
-                    try:
-                        views = video['yt$statistics']['viewCount']
-                        
-                        # If views are available, format with commas
-                        if views:
-                            formatted_views = '{:,}'.format(int(views))
-                            
-                            if use_bold and formatted_views:
-                                formatted_views = ircutils.bold(formatted_views)
-                            
-                            template = template.replace("$view_count", formatted_views)
-                    
-                    except IndexError:
-                        self.log.info("TubeSleuth: failed to get views for %s" % (title))
-                    
-                    # Attempt to get rating
-                    try:
-                        json_rating = video["gd$rating"]["average"]                        
-                        rating = round(int(json_rating), 2)
-                        
-                        if use_bold and rating:
-                            rating = ircutils.bold(rating)
-                        
-                        template = template.replace("$rating", str(rating))
-                    
-                    except IndexError:
-                        self.log.info("TubeSleuth: failed to get rating for %s" % (title))
-            
+                else:
+                
             except IndexError, e:
-                self.log.info(e)
+                self.log.info("TubeSleuth: unexpected API response")
         
         except Exception, err:
-            self.log.error(str(err))
+            self.log.error("TubeSleuth: %s" % (str(err)))
         
         if result:
             irc.sendMsg(ircmsgs.privmsg(message_destination, template))
         else:
             irc.sendMsg(ircmsgs.privmsg(message_destination, no_results_message))
-        
-    yt = wrap(yt, ['text'])
+    
+    yt = wrap(yt, ["text"])
 
 Class = TubeSleuth
 
