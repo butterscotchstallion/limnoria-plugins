@@ -90,9 +90,10 @@ class TubeSleuth(callbacks.Plugin):
                     template = template.replace("$link", link)
                     template = template.replace("$title", title)
                 else:
-                
+                    self.log.error("TubeSleuth: unexpected API response")
+                    
             except IndexError, e:
-                self.log.info("TubeSleuth: unexpected API response")
+                self.log.error("TubeSleuth: unexpected API response")
         
         except Exception, err:
             self.log.error("TubeSleuth: %s" % (str(err)))
