@@ -97,13 +97,17 @@ class Cayenne(callbacks.Plugin):
         is_channel = irc.isChannel(channel)
         is_ctcp = ircmsgs.isCtcp(msg)        
         message = msg.args[1]
+        bot_nick = irc.nick
         
         # Check origin nick to make sure the trigger
         # didn"t come from the bot.
         origin_nick = msg.nick
         
-        # Only react to messages/actions in a channel
-        if is_channel and not is_ctcp:            
+        is_message_from_self = origin_nick.lower() == bot_nick.lower()
+        
+        # Only react to messages/actions in a channel and to messages that aren't from
+        # the bot itself.
+        if is_channel and not is_ctcp and not is_message_from_self:            
             if type(message) is str and len(message):
                 fact_chance = int(self.registryValue("factChance"))
                 link_chance = int(self.registryValue("linkChance"))            
@@ -121,12 +125,12 @@ class Cayenne(callbacks.Plugin):
                 if triggered is not False:
                     self.log.debug("Cayenne triggered because message contained %s" % (triggered))
                     
-                    fact_rand = random.randrange(0, 100) < fact_chance
-                    link_rand = random.randrange(0, 100) < link_chance
+                    fact_rand = random.randrange(0, 100) <= fact_chance
+                    link_rand = random.randrange(0, 100) <= link_chance
                     
                     if fact_rand or link_rand:
                         if throttled:                    
-                            self.log.info("Cayenne throttled. Not meowing: it has been %s seconds" % (seconds))
+                            self.log.info("Cayenne throttled. Not meowing: it has been %s seconds" % (round(seconds, 1)))
                         else:
                             self.last_message_timestamp = now
                             
