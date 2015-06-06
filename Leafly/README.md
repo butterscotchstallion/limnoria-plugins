@@ -1,7 +1,7 @@
 # Leafly
 
-Queries Leafly API to retrieve information. This plugin requires an app key/app id. You can (sign up for one
-here (free))[https://developer.leafly.com/signup]
+Queries Leafly API to retrieve information. This plugin requires a free app key/app id. You can [sign up for one
+here](https://developer.leafly.com/signup)
 
 Once you've signed up, you'll need your `app_key` and `app_id` which will be used to query the Leafly API.
 
@@ -30,7 +30,9 @@ Default value: `[$category] $name ($rating) :: Flavors: $flavors :: Effects: $ta
 
 `errorMessage` - This message is used if something goes wrong. This is typically when your API quota has been exceeded.
 
-Default value: `Lookup failed. Try !g leafly blue dream` *Pro Tip* Use this plugin in conjunction with (GoogleCSE)[https://github.com/prgmrbill/limnoria-plugins/tree/master/GoogleCSE] to provide a fallback in this scenario.
+Default value: `Lookup failed. Try !g leafly blue dream` 
+
+*Pro Tip* Use this plugin in conjunction with [GoogleCSE](https://github.com/prgmrbill/limnoria-plugins/tree/master/GoogleCSE) to provide a fallback in this scenario.
 
 `noResultsMessage` - This message is used if there were no results.
 
