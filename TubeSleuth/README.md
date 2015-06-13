@@ -22,7 +22,7 @@ Searches Youtube using [Youtube Data API (v3)](https://developers.google.com/you
 
 `template` - This is the template used when displaying search output.
 
-Default value: `$link :: $title`
+Default value: `$yt_logo $link :: $title`
 
 `sortOrder` - The order parameter specifies the method that will be used to order resources in the API response. Default value: `relevance`
 

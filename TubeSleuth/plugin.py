@@ -89,6 +89,9 @@ class TubeSleuth(callbacks.Plugin):
                     link = "https://youtu.be/%s" % (id)
                     template = template.replace("$link", link)
                     template = template.replace("$title", title)
+                    
+                    yt_logo = self.get_youtube_logo()
+                    template = template.replace("$yt_logo", yt_logo)
                 else:
                     self.log.error("TubeSleuth: unexpected API response")
                     
@@ -104,6 +107,16 @@ class TubeSleuth(callbacks.Plugin):
             irc.sendMsg(ircmsgs.privmsg(message_destination, no_results_message))
     
     yt = wrap(yt, ["text"])
+
+    def get_youtube_logo(self):
+        colored_letters = [
+            "%s" % ircutils.mircColor("You", fg="red", bg="white"),
+            "%s" % ircutils.mircColor("Tube", fg="white", bg="red")
+        ]
+                        
+        yt_logo = "".join(colored_letters)
+        
+        return yt_logo
 
 Class = TubeSleuth
 

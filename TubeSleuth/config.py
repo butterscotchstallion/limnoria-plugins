@@ -33,7 +33,7 @@ conf.registerGlobalValue(TubeSleuth, 'sortOrder',
      registry.String("relevance", _("""The order parameter specifies the method that will be used to order resources in the API response.""")))
      
 conf.registerGlobalValue(TubeSleuth, 'template',
-     registry.String("$link :: $title", _("""Template used for search result replies""")))
+     registry.String("$yt_logo $link :: $title", _("""Template used for search result replies""")))
 
 conf.registerGlobalValue(TubeSleuth, 'useBold',
      registry.Boolean(False, _("""Use bold in replies""")))
