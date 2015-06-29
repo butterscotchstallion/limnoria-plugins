@@ -79,14 +79,30 @@ class LessAnonymous(callbacks.Plugin):
             channel = msg.args[0]
             is_channel = irc.isChannel(channel)
             is_private_message = not is_channel
+            nick = msg.nick
+            hostmask = irc.state.nickToHostmask(nick)
             
-            if is_private_message and self.registryValue("requirePublic"):
-                irc.error(_('requirePublic is False, not replying to command from private'), Raise=True)
+            is_owner = self.isOwner(irc, channel, hostmask)
+            
+            if is_owner:
+                self.log.info("LessAnonymous: allowing PM because %s has owner capability" % nick)
+            else:
+                if is_private_message and self.registryValue("requirePublic"):
+                    irc.error(_('requirePublic is False, not replying to command from private'), Raise=True)
         
         elif not self.registryValue('allowPrivateTarget'):
             irc.error(_('This command is disabled (supybot.plugins.Anonymous.'
                       'allowPrivateTarget is False).'), Raise=True)
-
+    
+    def isOwner(self, irc, channel, hostmask):
+        if ircdb.checkCapability(hostmask, "owner"):
+            return True
+        
+        if ircutils.strEqual(hostmask, irc.prefix):
+            return True
+        
+        return False
+    
     @internationalizeDocstring
     def say(self, irc, msg, args, target, text):
         """<channel> <text>
