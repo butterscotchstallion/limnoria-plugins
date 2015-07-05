@@ -66,7 +66,8 @@ class SpiffyRadio(callbacks.Plugin):
 						for channel in channels:
 							self.irc.sendMsg(ircmsgs.privmsg(channel, message))
 					else:
-						self.log.info("SpiffyRadio: track has not changed, not announcing.")
+						track_info = (self.last_track["artist"], self.last_track["title"])
+						self.log.info("SpiffyRadio: track has not changed - still playing \"%s - %s\". Not announcing." % track_info)
 
 		except Exception as e:
 			self.log.error("SpiffyRadio: exception %s", str(e))
@@ -74,8 +75,8 @@ class SpiffyRadio(callbacks.Plugin):
 	def get_current_track_info(self):
 		""" Get JSON from Icecast API"""
 		api_url = self.registryValue("icecastAPIURL")
-		artistChanged = True
-		trackChanged = True
+		artistChanged = False
+		trackChanged = False
 
 		if not api_url:
 			irc.error("No API URL set!")
@@ -92,21 +93,20 @@ class SpiffyRadio(callbacks.Plugin):
 				if response is not None and "icestats" in response:
 					try:
 						current_track = response["icestats"]["source"][0]
-						
+
 						"""
 						This horrible API returns an object if there is only one track
 						and a list if there is more than one. Absolutely disgusting.
 						"""
-						if current_track is None:
-							current_track = response["icestats"]["source"]
-						
+						#if current_track is None:
+						#	current_track = response["icestats"]["source"]
+
 						if self.last_track is not None:
 							artistChanged = current_track["artist"] != self.last_track["artist"]
 							trackChanged = current_track["title"] != self.last_track["title"]
-						else:
-							self.last_track = current_track
-
+						
 						self.track_has_changed = artistChanged and trackChanged
+						self.last_track = current_track
 
 						return current_track				
 					except KeyError:
