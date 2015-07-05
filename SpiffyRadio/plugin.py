@@ -37,20 +37,29 @@ class SpiffyRadio(callbacks.Plugin):
 		self.irc = irc
 
 		if self.registryValue("autoAnnounceNewTracks"):
-			try:
-				schedule.removeEvent("SpiffyRadioAutoAnnounce")
-			except:
-				pass
-
 			self.set_auto_announce_interval()
 
 	def set_auto_announce_interval(self):
 		interval = self.registryValue("pollingIntervalInSeconds")
 
+		self.remove_announce_interval()
+
 		if not self.auto_announce_interval:
 			self.auto_announce_interval = schedule.addPeriodicEvent(self.announce_to_channels, 
 																	interval,
 																	"SpiffyRadioAutoAnnounce")
+
+	def remove_announce_interval(self):
+		try:
+			schedule.removeEvent("SpiffyRadioAutoAnnounce")
+			self.auto_announce_interval = None
+		except:
+			pass
+
+	def doUnload(self):
+		self.log.info("SpiffyRadio: unloading!")
+
+		self.remove_announce_interval()
 
 	def announce_to_channels(self):
 		channels = list(self.registryValue("autoAnnounceChannels"))
