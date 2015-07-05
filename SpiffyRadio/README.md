@@ -14,10 +14,10 @@ Default value: `Now playing $artist - $title ($listeners listeners) :: Tune in: 
 
 `supybot.plugins.SpiffyRadio.pollingIntervalInSeconds` - Poll API every X seconds
 
-`supybot.plugins.SpiffyRadio.autoAnnounceNewTracks` - Whether to announce new tracks
+`supybot.plugins.SpiffyRadio.autoAnnounceNewTracks` - Whether to announce new tracks (Boolean)
 
 `supybot.plugins.SpiffyRadio.autoAnnounceChannels` - Comma separated list of channels to which to announce. No spaces.
 
 Example: `!config supybot.plugins.SpiffyRadio.autoAnnounceChannels #foo,#bar`
 
-`supybot.plugins.SpiffyRadio.errorMessage` - This message is displayed 
+`supybot.plugins.SpiffyRadio.errorMessage` - This message is displayed when there is a problem reaching the API.
