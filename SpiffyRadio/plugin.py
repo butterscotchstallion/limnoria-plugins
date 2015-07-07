@@ -38,6 +38,8 @@ class SpiffyRadio(callbacks.Plugin):
 
 		if self.registryValue("autoAnnounceNewTracks"):
 			self.set_auto_announce_interval()
+		else:
+			self.remove_announce_interval()
 
 	def set_auto_announce_interval(self):
 		interval = self.registryValue("pollingIntervalInSeconds")
@@ -64,22 +66,23 @@ class SpiffyRadio(callbacks.Plugin):
 	def announce_to_channels(self):
 		channels = list(self.registryValue("autoAnnounceChannels"))
 
-		try:
-			if len(channels) > 0:
-				message = self.get_now_playing_message()
+		if self.registryValue("autoAnnounceNewTracks"):
+			try:
+				if len(channels) > 0:
+					message = self.get_now_playing_message()
 
-				if message is not None:
-					if self.track_has_changed:
-						self.log.info("SpiffyRadio: announcing to channels (%s): %s" % (len(channels), str(channels)))
+					if message is not None:
+						if self.track_has_changed:
+							self.log.info("SpiffyRadio: announcing to channels (%s): %s" % (len(channels), str(channels)))
 
-						for channel in channels:
-							self.irc.sendMsg(ircmsgs.privmsg(channel, message))
-					else:
-						track_info = (self.last_track["artist"], self.last_track["title"])
-						self.log.info("SpiffyRadio: track has not changed - still playing \"%s - %s\". Not announcing." % track_info)
+							for channel in channels:
+								self.irc.sendMsg(ircmsgs.privmsg(channel, message))
+						else:
+							track_info = (self.last_track["artist"], self.last_track["title"])
+							self.log.info("SpiffyRadio: track has not changed - still playing \"%s - %s\". Not announcing." % track_info)
 
-		except Exception as e:
-			self.log.error("SpiffyRadio: exception %s", str(e))
+			except Exception as e:
+				self.log.error("SpiffyRadio: exception %s", str(e))
 
 	def get_current_track_info(self):
 		""" Get JSON from Icecast API"""
