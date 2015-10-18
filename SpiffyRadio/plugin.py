@@ -1,5 +1,5 @@
 ###
-# Copyright (c) 2015, PrgmrBill
+# Copyright (c) 2015, butterscotchstallion
 # Based on work by Copyright (c) 2010, melodeath
 # All rights reserved.
 #

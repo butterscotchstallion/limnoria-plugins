@@ -7,7 +7,7 @@ Once you've signed up, you'll need your `app_key` and `app_id` which will be use
 
 ## Install Leafly
 
-- `git clone https://github.com/prgmrbill/limnoria-plugins.git`
+- `git clone https://github.com/butterscotchstallion/limnoria-plugins.git`
 - `cd limnoria-plugins`
 - `cp -r Leafly ~/your_bot_directory/plugins`
 - `cd ~/your_bot_directory/plugins/Leafly`
@@ -32,7 +32,7 @@ Default value: `[$category] $name ($rating) :: Flavors: $flavors :: Effects: $ta
 
 Default value: `Lookup failed. Try !g leafly blue dream` 
 
-*Pro Tip* Use this plugin in conjunction with [GoogleCSE](https://github.com/prgmrbill/limnoria-plugins/tree/master/GoogleCSE) to provide a fallback in this scenario.
+*Pro Tip* Use this plugin in conjunction with [GoogleCSE](https://github.com/butterscotchstallion/limnoria-plugins/tree/master/GoogleCSE) to provide a fallback in this scenario.
 
 `noResultsMessage` - This message is used if there were no results.
 

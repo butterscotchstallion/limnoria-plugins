@@ -1,7 +1,7 @@
 Radio information for Icecast 2 streams
 
 ## Install and load SpiffyRadio
-- `git clone https://github.com/prgmrbill/limnoria-plugins.git`
+- `git clone https://github.com/butterscotchstallion/limnoria-plugins.git`
 - `cd limnoria-plugins`
 - `cp -r SpiffyRadio ~/your_bot_directory/plugins`
 - `cd ~/your_bot_directory/plugins/SpiffyRadio`

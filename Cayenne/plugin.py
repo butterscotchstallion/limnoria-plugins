@@ -2,7 +2,7 @@
 """
 Cayenne - Displays cat facts or cat gifs based on probability
 
-Copyright (c) 2015, PrgmrBill
+Copyright (c) 2015, butterscotchstallion
 All rights reserved.
 """
 import supybot.utils as utils

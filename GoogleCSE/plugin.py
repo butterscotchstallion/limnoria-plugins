@@ -4,7 +4,7 @@
 # GoogleCSE plugin - Uses Google Custom Search Engine to perform queries
 # against the Google API.
 #
-# Copyright (c) 2015, PrgmrBill
+# Copyright (c) 2015, butterscotchstallion
 # All rights reserved.
 #
 #
