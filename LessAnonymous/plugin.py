@@ -1,7 +1,7 @@
 ###
 # Copyright (c) 2005, Daniel DiPaolo
 # Copyright (c) 2014, James McCoy
-# Copyright (c) 2015, PrgmrBill
+# Copyright (c) 2015, butterscotchstallion
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
