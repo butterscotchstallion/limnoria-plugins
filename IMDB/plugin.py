@@ -32,7 +32,7 @@ class IMDB(callbacks.Plugin):
         Queries OMDB api for query
         """
         encoded_query = quote_plus(query)
-        omdb_url = "http://www.omdbapi.com/?t=%s&y=&plot=short&r=json" % (encoded_query)
+        omdb_url = "http://www.omdbapi.com/?t=%s&y=&plot=short&r=json&tomatoes=true" % (encoded_query)
         channel = msg.args[0]
         result = None
         headers = {
@@ -57,8 +57,12 @@ class IMDB(callbacks.Plugin):
                     imdb_template = imdb_template.replace("$title", response["Title"])
                     imdb_template = imdb_template.replace("$year", response["Year"])
                     imdb_template = imdb_template.replace("$country", response["Country"])
+                    imdb_template = imdb_template.replace("$director", response["Director"])
                     imdb_template = imdb_template.replace("$plot", response["Plot"])
+                    imdb_template = imdb_template.replace("$imdbID", response["imdbID"])
                     imdb_template = imdb_template.replace("$imdbRating", response["imdbRating"])
+                    imdb_template = imdb_template.replace("$tomatoMeter", response["tomatoMeter"])
+                    imdb_template = imdb_template.replace("$metascore", response["Metascore"])
                     
                     result = imdb_template
             else:
