@@ -28,7 +28,7 @@ def configure(advanced):
 Ericpedia = conf.registerPlugin('Ericpedia')
 # This is where your configuration variables (if any) should go.  For example:
 conf.registerChannelValue(Ericpedia, 'replaceString',
-    registry.String("Eric", _("""Replaces random part of the title with this string or $nick for the nick of the person issuing the command.""")))
+    registry.String("$nick", _("""Replaces random part of the title with this string or $nick for the nick of the person issuing the command.""")))
 
 conf.registerChannelValue(Ericpedia, 'wikipediaRandomPageURL',
     registry.String("https://en.wikipedia.org/wiki/Special:Random", _("""URL used to find a random Wikipedia page""")))
