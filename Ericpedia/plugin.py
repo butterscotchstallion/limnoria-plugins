@@ -31,9 +31,10 @@ class Ericpedia(callbacks.Plugin):
         """
         Fetches random wikipedia article and replaces a random word
         """
-        url = self.registryValue("wikipediaRandomPageURL")
         channel = msg.args[0]
-
+        origin_nick = msg.nick
+        url = self.registryValue("wikipediaRandomPageURL", channel=channel)
+        
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.60 Safari/537.36"
         }
@@ -47,7 +48,11 @@ class Ericpedia(callbacks.Plugin):
             if title:
                 words = title.split(" ")
                 random_word = choice(words)
-                replaceWithThisString = self.registryValue("replaceString")                
+                replaceWithThisString = self.registryValue("replaceString", channel=channel)
+
+                if replaceWithThisString == "$nick":
+                    replaceWithThisString = origin_nick.title()
+
                 replaced_title = title.replace(random_word, replaceWithThisString)
 
                 self.log.debug("Ericpedia: %s => %s" % (title, replaced_title))

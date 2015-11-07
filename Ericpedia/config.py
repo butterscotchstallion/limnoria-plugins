@@ -27,10 +27,10 @@ def configure(advanced):
 
 Ericpedia = conf.registerPlugin('Ericpedia')
 # This is where your configuration variables (if any) should go.  For example:
-conf.registerGlobalValue(Ericpedia, 'replaceString',
-    registry.String("Eric", _("""Replaces random part of the title with this string""")))
+conf.registerChannelValue(Ericpedia, 'replaceString',
+    registry.String("Eric", _("""Replaces random part of the title with this string or $nick for the nick of the person issuing the command.""")))
 
-conf.registerGlobalValue(Ericpedia, 'wikipediaRandomPageURL',
+conf.registerChannelValue(Ericpedia, 'wikipediaRandomPageURL',
     registry.String("https://en.wikipedia.org/wiki/Special:Random", _("""URL used to find a random Wikipedia page""")))
 
 # vim:set shiftwidth=4 tabstop=4 expandtab textwidth=79:
