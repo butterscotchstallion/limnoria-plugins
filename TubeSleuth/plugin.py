@@ -65,7 +65,7 @@ class TubeSleuth(callbacks.Plugin):
         
         search_url = "%s?%s" % (base_url, urllib.urlencode(opts))
         
-        self.log.info("TubeSleuth URL: %s" % (search_url))
+        self.log.debug("TubeSleuth URL: %s" % (search_url))
         
         result = False
         
