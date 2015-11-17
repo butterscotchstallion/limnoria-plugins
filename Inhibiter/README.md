@@ -1,0 +1,1 @@
+Duplicitous power
