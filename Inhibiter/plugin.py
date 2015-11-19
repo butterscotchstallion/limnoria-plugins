@@ -216,9 +216,9 @@ class Inhibiter(callbacks.Plugin):
         if is_bot_joining:
             suckers_msg = self.get_kick_message(channel)
             irc.sendMsg(ircmsgs.privmsg(channel, suckers_msg))
-        else:
-            welcome_message = self.get_instructions(origin_nick)
-            irc.sendMsg(ircmsgs.privmsg(channel, welcome_message))
+        #else:
+            #welcome_message = self.get_instructions(origin_nick)
+            #irc.sendMsg(ircmsgs.privmsg(channel, welcome_message))
 
     def doMode(self, irc, msg):
         channel = msg.args[0]
@@ -288,7 +288,7 @@ class Inhibiter(callbacks.Plugin):
                     "Flying Spaghetti Monster grants %s voice")
 
         return random.choice(messages)
-    
+
     def trick_or_treat(self, irc, nick, channel):
         """
         Randomly voices or kicks
@@ -301,7 +301,9 @@ class Inhibiter(callbacks.Plugin):
 
         collateral_chance = self.registryValue("collateralChance", channel=channel)
         collateral_targets = self.registryValue("collateralTargets", channel=channel)
-        collateral_nick = random.choice(collateral_targets)
+        collateral_nick = None
+        if len(collateral_targets) > 0:
+            collateral_nick = random.choice(collateral_targets)
         apply_collateral = False
 
         op_chance = self.registryValue("opChance", channel=channel)
@@ -451,6 +453,7 @@ class Inhibiter(callbacks.Plugin):
     whoami = ops
     k = ops
     invite = ops
+    snacks = ops
 
     def user_has_capability(self, msg, capability_name):
         channel = msg.args[0]
