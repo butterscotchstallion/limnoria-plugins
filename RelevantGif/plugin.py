@@ -64,9 +64,8 @@ class RelevantGif(callbacks.Plugin):
                 if no_result:
                     self.log.info("RelevantGif: query error for %s" % (giphy_url))
                 else:
-
                     relevantgif_template = self.registryValue("template")
-                    relevantgif_template = relevantgif_template.replace("$url", response["data"][randrange(0, result_range_max-1)]["images"]["original"]["url"])
+                    relevantgif_template = relevantgif_template.replace("$url", response["data"][randrange(0, result_range_max)]["images"]["original"]["url"])
 
                     result = relevantgif_template
             else:
