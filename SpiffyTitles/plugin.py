@@ -80,7 +80,7 @@ class SpiffyTitles(callbacks.Plugin):
         self.handlers["coub.com"] = self.handler_coub
     
     def add_wikipedia_handlers(self):
-        self.handlers["en.wikipedia.org"] = self.handler_wikipedia
+        self.handlers["wikipedia.org"] = self.handler_wikipedia
 
     def handler_dailymotion(self, url, info, channel):
         """
@@ -327,15 +327,15 @@ class SpiffyTitles(callbacks.Plugin):
                 
                 info = urlparse(url)
                 domain = info.netloc
-                is_ignored = self.is_ignored_domain(domain)
+                is_ignored = self.is_ignored_domain(domain, channel)
                 
                 if is_ignored:
                     log.debug("SpiffyTitles: URL ignored due to domain blacklist match: %s" % url)
                     return
                 
-                is_whitelisted_domain = self.is_whitelisted_domain(domain)
+                is_whitelisted_domain = self.is_whitelisted_domain(domain, channel)
                 
-                if self.registryValue("whitelistDomainPattern") and not is_whitelisted_domain:
+                if self.registryValue("whitelistDomainPattern", channel=channel) and not is_whitelisted_domain:
                     log.debug("SpiffyTitles: URL ignored due to domain whitelist mismatch: %s" % url)
                     return
                 
@@ -375,8 +375,13 @@ class SpiffyTitles(callbacks.Plugin):
                 handler = self.handlers[domain]                        
                 title = handler(url, info, channel)
             else:
-                if self.default_handler_enabled:
-                    title = self.handler_default(url, channel)
+                base_domain = self.get_base_domain('http://' + domain)
+                if base_domain in self.handlers:
+                    handler = self.handlers[base_domain]                        
+                    title = handler(url, info, channel)
+                else:
+                    if self.default_handler_enabled:
+                        title = self.handler_default(url, channel)
         
         if title is not None:
             title = self.get_formatted_title(title, channel)
@@ -457,7 +462,6 @@ class SpiffyTitles(callbacks.Plugin):
         """
         Enables meta info about IMDB links through the OMDB API
         """
-        self.handlers["www.imdb.com"] = self.handler_imdb
         self.handlers["imdb.com"] = self.handler_imdb
     
     def add_youtube_handlers(self):
@@ -466,9 +470,7 @@ class SpiffyTitles(callbacks.Plugin):
         domain used in the URL.
         """
         self.handlers["youtube.com"] = self.handler_youtube
-        self.handlers["www.youtube.com"] = self.handler_youtube
         self.handlers["youtu.be"] = self.handler_youtube
-        self.handlers["m.youtube.com"] = self.handler_youtube
     
     def is_channel_allowed(self, channel):
         """
@@ -502,11 +504,11 @@ class SpiffyTitles(callbacks.Plugin):
         """
         return set([channel for channel in input if len(channel.strip())])
     
-    def is_ignored_domain(self, domain):
+    def is_ignored_domain(self, domain, channel):
         """
         Checks domain against a regular expression
         """
-        pattern = self.registryValue("ignoredDomainPattern")
+        pattern = self.registryValue("ignoredDomainPattern", channel=channel)
         
         if pattern:
             log.debug("SpiffyTitles: matching %s against %s" % (domain, str(pattern)))
@@ -521,11 +523,11 @@ class SpiffyTitles(callbacks.Plugin):
             except re.Error:
                 log.error("SpiffyTitles: invalid regular expression: %s" % (pattern))
     
-    def is_whitelisted_domain(self, domain):
+    def is_whitelisted_domain(self, domain, channel):
         """
         Checks domain against a regular expression
         """
-        pattern = self.registryValue("whitelistDomainPattern")
+        pattern = self.registryValue("whitelistDomainPattern", channel=channel)
         
         if pattern:
             log.debug("SpiffyTitles: matching %s against %s" % (domain, str(pattern)))
@@ -759,13 +761,13 @@ class SpiffyTitles(callbacks.Plugin):
         if default_handler_enabled:
             log.debug("SpiffyTitles: calling default handler for %s" % (url))
             default_template = Template(self.registryValue("defaultTitleTemplate", channel=channel))
-            html = self.get_source_by_url(url)
+            (html, is_redirect) = self.get_source_by_url(url)
             
             if html is not None and html:
                 title = self.get_title_from_html(html)
                 
                 if title is not None:
-                    title_template = default_template.render(title=title)
+                    title_template = default_template.render(title=title, redirect=is_redirect)
                     
                     return title_template
         else:
@@ -863,7 +865,7 @@ class SpiffyTitles(callbacks.Plugin):
         api_params = default_api_params.copy()
         api_params.update(extra_params)
         api_params.update(title_param)
-        api_url = "https://en.wikipedia.org/w/api.php?%s" % ('&'.join("%s=%s" % (key, val) for (key,val) in api_params.iteritems()))
+        api_url = "https://%s/w/api.php?%s" % (info.netloc, '&'.join("%s=%s" % (key, val) for (key,val) in api_params.iteritems()))
 
         agent = self.get_user_agent()
         headers = {
@@ -1113,6 +1115,18 @@ class SpiffyTitles(callbacks.Plugin):
             log.debug("SpiffyTitles: requesting %s" % (url))
             
             request = requests.get(url, headers=headers, timeout=10, allow_redirects=True)
+
+            is_redirect = False
+            if request.history:
+                # check the top two domain levels
+                link_domain = self.get_base_domain(request.history[0].url)
+                real_domain = self.get_base_domain(request.url)
+                if link_domain != real_domain:
+                    is_redirect = True
+
+                for redir in request.history:
+                    log.debug("SpiffyTitles: Redirect %s from %s" % (redir.status_code, redir.url))
+                log.debug("SpiffyTitles: Final url %s" % (request.url))
             
             if request.status_code == requests.codes.ok:
                 # Check the content type which comes in the format: "text/html; charset=UTF-8"
@@ -1125,7 +1139,7 @@ class SpiffyTitles(callbacks.Plugin):
                     text = request.content
                     
                     if text:
-                        return text
+                        return (text, is_redirect)
                     else:
                         log.debug("SpiffyTitles: empty content from %s" % (url))                        
                 
@@ -1155,6 +1169,12 @@ class SpiffyTitles(callbacks.Plugin):
             log.error("SpiffyTitles HTTPError: %s" % (str(e)))
         except requests.exceptions.InvalidURL as e:
             log.error("SpiffyTitles InvalidURL: %s" % (str(e)))
+
+    def get_base_domain(self, url):
+        """
+        Returns the FQDN comprising the top two domain levels
+        """
+        return '.'.join(urlparse(url).netloc.rsplit('.', 2)[-2:])
     
     def get_headers(self):
         agent = self.get_user_agent()

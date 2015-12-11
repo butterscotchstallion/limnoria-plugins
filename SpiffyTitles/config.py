@@ -71,9 +71,9 @@ conf.registerGlobalValue(SpiffyTitles, 'urlRegularExpression',
 conf.registerChannelValue(SpiffyTitles, 'useBold',
      registry.Boolean(False, _("""Use bold in titles""")))
 
-# Title template
+# Title template - show a warning if redirects to a different domain
 conf.registerChannelValue(SpiffyTitles, 'defaultTitleTemplate',
-     registry.String("^ {{title}}", _("""Template used for default title responses""")))
+     registry.String("{% if redirect %}(REDIRECT) {% endif %}^ {{title}}", _("""Template used for default title responses""")))
 
 # YouTube template
 conf.registerChannelValue(SpiffyTitles, 'youtubeTitleTemplate',
@@ -102,11 +102,11 @@ conf.registerGlobalValue(SpiffyTitles, 'mimeTypes',
                          registry.CommaSeparatedListOfStrings(["text/html"], _("""Acceptable mime types for displaying titles""")))
 
 # Ignored domain pattern
-conf.registerGlobalValue(SpiffyTitles, 'ignoredDomainPattern',
+conf.registerChannelValue(SpiffyTitles, 'ignoredDomainPattern',
                          registry.Regexp("", _("""Domains matching this patterns will be ignored""")))
 
 # Whitelist domain pattern
-conf.registerGlobalValue(SpiffyTitles, 'whitelistDomainPattern',
+conf.registerChannelValue(SpiffyTitles, 'whitelistDomainPattern',
                          registry.Regexp("", _("""Domains not matching this patterns will be ignored""")))
 
 # Channel whitelist
