@@ -71,9 +71,9 @@ conf.registerGlobalValue(SpiffyTitles, 'urlRegularExpression',
 conf.registerChannelValue(SpiffyTitles, 'useBold',
      registry.Boolean(False, _("""Use bold in titles""")))
 
-# Title template
+# Title template - show a warning if redirects to a different domain
 conf.registerChannelValue(SpiffyTitles, 'defaultTitleTemplate',
-     registry.String("^ {{title}}", _("""Template used for default title responses""")))
+     registry.String("{% if redirect %}(REDIRECT) {% endif %}^ {{title}}", _("""Template used for default title responses""")))
 
 # YouTube template
 conf.registerChannelValue(SpiffyTitles, 'youtubeTitleTemplate',
@@ -102,11 +102,11 @@ conf.registerGlobalValue(SpiffyTitles, 'mimeTypes',
                          registry.CommaSeparatedListOfStrings(["text/html"], _("""Acceptable mime types for displaying titles""")))
 
 # Ignored domain pattern
-conf.registerGlobalValue(SpiffyTitles, 'ignoredDomainPattern',
+conf.registerChannelValue(SpiffyTitles, 'ignoredDomainPattern',
                          registry.Regexp("", _("""Domains matching this patterns will be ignored""")))
 
 # Whitelist domain pattern
-conf.registerGlobalValue(SpiffyTitles, 'whitelistDomainPattern',
+conf.registerChannelValue(SpiffyTitles, 'whitelistDomainPattern',
                          registry.Regexp("", _("""Domains not matching this patterns will be ignored""")))
 
 # Channel whitelist
@@ -152,3 +152,29 @@ conf.registerChannelValue(SpiffyTitles, 'requireCapability',
 
 conf.registerChannelValue(SpiffyTitles, 'ignoredTitlePattern',
                         registry.Regexp("", _("""Titles matching this pattern will be ignored.""")))
+
+
+conf.registerGroup(SpiffyTitles, 'wikipedia')
+
+conf.registerChannelValue(SpiffyTitles.wikipedia, 'enabled',
+                        registry.Boolean(True, _("""Whether to fetch extracts for Wikipedia articles.""")))
+
+conf.registerChannelValue(SpiffyTitles.wikipedia, 'apiParams',
+                        registry.SpaceSeparatedListOfStrings([], _("""Add or override API query parameters with a space-separated list of key=value pairs.""")))
+
+conf.registerChannelValue(SpiffyTitles.wikipedia, 'titleParam',
+                        registry.String("titles", _("""The query parameter that will hold the page title from the URL.""")))
+
+# Ideally, links to specific article sections would produce the relevant output for that section. This is not currently implemented.
+conf.registerChannelValue(SpiffyTitles.wikipedia, 'ignoreSectionLinks',
+                        registry.Boolean(True, _("""Ignore links to specific article sections.""")))
+
+conf.registerChannelValue(SpiffyTitles.wikipedia, 'maxChars',
+                        registry.Integer(240, _("""Extract will be cut to this length (including '...').""")))
+
+# Remove parenthesized text from output.
+conf.registerChannelValue(SpiffyTitles.wikipedia, 'removeParentheses',
+                        registry.Boolean(True, _("""Remove parenthesized text from output.""")))
+
+conf.registerChannelValue(SpiffyTitles.wikipedia, 'extractTemplate',
+                        registry.String("^ {{extract}}", _("""Wikipedia template.""")))
