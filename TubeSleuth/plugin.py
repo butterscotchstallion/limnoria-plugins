@@ -76,7 +76,7 @@ class TubeSleuth(callbacks.Plugin):
             try:
                 items = data["items"]
                 
-                if items:
+                if len(items) > 0:
                     video = items[0]
                     snippet = video["snippet"]
                     id = video["id"]["videoId"]
@@ -102,9 +102,9 @@ class TubeSleuth(callbacks.Plugin):
             self.log.error("TubeSleuth: %s" % (str(err)))
         
         if result:
-            irc.sendMsg(ircmsgs.privmsg(message_destination, template))
+            irc.queueMsg(ircmsgs.privmsg(message_destination, template))
         else:
-            irc.sendMsg(ircmsgs.privmsg(message_destination, no_results_message))
+            irc.queueMsg(ircmsgs.privmsg(message_destination, no_results_message))
     
     yt = wrap(yt, ["text"])
 
