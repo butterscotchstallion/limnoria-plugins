@@ -12,10 +12,14 @@ import supybot.ircutils as ircutils
 import supybot.ircmsgs as ircmsgs
 import supybot.callbacks as callbacks
 import requests
+import sys
 from random import randrange
-from urllib import quote_plus
 import json
 
+if sys.version_info[0] >= 3:
+    from urllib.parse import quote_plus
+else:
+    from urllib import quote_plus
 try:
     from supybot.i18n import PluginInternationalization
     _ = PluginInternationalization('RelevantGif')
