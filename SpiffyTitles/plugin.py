@@ -1284,41 +1284,42 @@ class SpiffyTitles(callbacks.Plugin):
 
             log.debug("SpiffyTitles: requesting %s" % (url))
 
-            request = requests.get(url, headers=headers, timeout=15, allow_redirects=True, verify=verify_ssl_certs)
+            with requests.get(url, headers=headers, timeout=15, allow_redirects=True, 
+                              verify=verify_ssl_certs, stream=True) as request:
 
-            is_redirect = False
-            if request.history:
-                # check the top two domain levels
-                link_domain = self.get_base_domain(request.history[0].url)
-                real_domain = self.get_base_domain(request.url)
-                if link_domain != real_domain:
-                    is_redirect = True
+                is_redirect = False
+                if request.history:
+                    # check the top two domain levels
+                    link_domain = self.get_base_domain(request.history[0].url)
+                    real_domain = self.get_base_domain(request.url)
+                    if link_domain != real_domain:
+                        is_redirect = True
 
-                for redir in request.history:
-                    log.debug("SpiffyTitles: Redirect %s from %s" % (redir.status_code, redir.url))
-                log.debug("SpiffyTitles: Final url %s" % (request.url))
+                    for redir in request.history:
+                        log.debug("SpiffyTitles: Redirect %s from %s" % (redir.status_code, redir.url))
+                    log.debug("SpiffyTitles: Final url %s" % (request.url))
 
-            if request.status_code == requests.codes.ok:
-                # Check the content type which comes in the format: "text/html; charset=UTF-8"
-                content_type = request.headers.get("content-type").split(";")[0].strip()
-                acceptable_types = self.registryValue("mimeTypes")
+                if request.status_code == requests.codes.ok:
+                    # Check the content type which comes in the format: "text/html; charset=UTF-8"
+                    content_type = request.headers.get("content-type").split(";")[0].strip()
+                    acceptable_types = self.registryValue("mimeTypes")
 
-                log.debug("SpiffyTitles: content type %s" % (content_type))
+                    log.debug("SpiffyTitles: content type %s" % (content_type))
 
-                if content_type in acceptable_types:
-                    text = request.content
+                    if content_type in acceptable_types:
+                        text = request.content
 
-                    if text:
-                        return (text, is_redirect)
+                        if text:
+                            return (text, is_redirect)
+                        else:
+                            log.debug("SpiffyTitles: empty content from %s" % (url))
+
                     else:
-                        log.debug("SpiffyTitles: empty content from %s" % (url))
-
+                        log.debug("SpiffyTitles: unacceptable mime type %s for url %s" %
+                                  (content_type, url))
                 else:
-                    log.debug("SpiffyTitles: unacceptable mime type %s for url %s" %
-                              (content_type, url))
-            else:
-                log.error("SpiffyTitles HTTP response code %s - %s" % (request.status_code,
-                                                                       request.content))
+                    log.error("SpiffyTitles HTTP response code %s - %s" % (request.status_code,
+                                                                           request.content))
 
         except timeout_decorator.TimeoutError:
             log.error("SpiffyTitles: wall timeout!")
