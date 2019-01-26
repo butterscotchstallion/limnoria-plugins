@@ -78,7 +78,7 @@ class SpiffyRadio(callbacks.Plugin):
 							for channel in channels:
 								self.irc.sendMsg(ircmsgs.privmsg(channel, message))
 						else:
-							track_info = (self.last_track["artist"], self.last_track["title"])
+							track_info = (self.last_track["title"])
 							self.log.info("SpiffyRadio: track has not changed - still playing \"%s - %s\". Not announcing." % track_info)
 
 			except Exception as e:
@@ -117,7 +117,7 @@ class SpiffyRadio(callbacks.Plugin):
 							artistChanged = current_track["server_name"] != self.last_track["server_name"]
 							trackChanged = current_track["title"] != self.last_track["title"]
 						
-						self.track_has_changed = artistChanged and trackChanged
+						self.track_has_changed = trackChanged
 						self.last_track = current_track
 
 						return current_track				
