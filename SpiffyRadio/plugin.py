@@ -104,7 +104,7 @@ class SpiffyRadio(callbacks.Plugin):
 
 				if response is not None and "icestats" in response:
 					try:
-						current_track = response["icestats"]["source"][0]
+						current_track = response["icestats"]["source"]
 
 						"""
 						This horrible API returns an object if there is only one track
@@ -114,7 +114,7 @@ class SpiffyRadio(callbacks.Plugin):
 						#	current_track = response["icestats"]["source"]
 
 						if self.last_track is not None:
-							artistChanged = current_track["artist"] != self.last_track["artist"]
+							artistChanged = current_track["server_name"] != self.last_track["server_name"]
 							trackChanged = current_track["title"] != self.last_track["title"]
 						
 						self.track_has_changed = artistChanged and trackChanged
@@ -138,7 +138,7 @@ class SpiffyRadio(callbacks.Plugin):
 	def get_now_playing_template(self, current_track):
 		template = self.registryValue("nowPlayingTemplate")
 
-		template = template.replace("$artist", current_track["artist"])
+		template = template.replace("$artist", current_track["server_name"])
 		template = template.replace("$title", current_track["title"])
 		template = template.replace("$listeners", str(current_track["listeners"]))
 		template = template.replace("$listenurl", current_track["listenurl"])
