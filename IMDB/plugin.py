@@ -36,15 +36,22 @@ class IMDB(callbacks.Plugin):
         """
         Queries OMDB api for query
         """
-		
+        
+        api_key = self.registryValue("apiKey")
+
+        if not api_key:
+            self.log.info("IMDB: no OMDb API Key!")
+            irc.error('No API key configured.')
+            return None
+
         if query[-4:].isdigit():
             encoded_query = quote_plus(query[0:-4])
             encoded_query_year = quote_plus(query[-4:])
-            omdb_url = "http://www.omdbapi.com/?t=%s&y=%s&plot=short&r=json&tomatoes=true&apikey=xxxxxxxx" % (encoded_query, encoded_query_year)
+            omdb_url = "http://www.omdbapi.com/?t=%s&y=%s&plot=short&r=json&tomatoes=true&apikey=%s" % (encoded_query, encoded_query_year, api_key)
             self.log.info("IMDB: Check for %s year %s" % (query[0:-4], query[-4:]))
         else:
             encoded_query = quote_plus(query)
-            omdb_url = "http://www.omdbapi.com/?t=%s&y=&plot=short&r=json&tomatoes=true&apikey=xxxxxxxx" % (encoded_query)
+            omdb_url = "http://www.omdbapi.com/?t=%s&y=&plot=short&r=json&tomatoes=true&apikey=%s" % (encoded_query, api_key)
 
         channel = msg.args[0]
         result = None

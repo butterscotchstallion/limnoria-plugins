@@ -30,6 +30,9 @@ IMDB = conf.registerPlugin('IMDB')
 conf.registerGlobalValue(IMDB, 'template',
      registry.String("$title ($year, $country) - Rating: $imdbRating :: $plot :: http://imdb.com/title/$imdbID", _("""Template for the output of a search query.""")))
 
+conf.registerGlobalValue(IMDB, 'apiKey',
+     registry.String("", _("""OMDb API Key"""), private=True))
+
 # alternative template:
 #                     $title ($year - $director) :: [i:$imdbRating r:$tomatoMeter m:$metascore] $plot :: http://imdb.com/title/$imdbID
 
