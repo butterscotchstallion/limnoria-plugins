@@ -2,6 +2,8 @@
 
 The ONLY gluten-free plugin for displaying link titles.
 
+## This library is no longer maintained. Feel free to fork or check out other forks!
+
 ## Notable features
 
 - Configurable template so you can decide how titles are displayed and what they say
