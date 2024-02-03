@@ -840,7 +840,15 @@ class SpiffyTitles(callbacks.Plugin):
         # We can only accommodate a specific format of URL here
         if "/title/" in url:
             imdb_id = url.split("/title/")[1].rstrip("/")
-            omdb_url = "http://www.omdbapi.com/?i=%s&plot=short&r=json&tomatoes=true" % (imdb_id)
+
+            omdb_api_key = self.registryValue("omdbApiKey")
+            if not omdb_api_key:
+                log.info("SpiffyTitles: no OMDb API key set! Check the documentation \
+                        for instructions.")
+                return None
+
+
+            omdb_url = "http://www.omdbapi.com/?i=%s&plot=short&r=json&tomatoes=true&apikey=%s" % (imdb_id,omdb_api_key)
 
             try:
                 request = requests.get(omdb_url, timeout=10, headers=headers)
