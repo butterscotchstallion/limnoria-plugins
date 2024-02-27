@@ -833,6 +833,11 @@ class SpiffyTitles(callbacks.Plugin):
 
             return self.handler_default(url, channel)
 
+        imdb_key = self.registryValue("imdbKey")
+        if not imdb_key:
+            log.info("SpiffyTitles: no Imdb key set! Check https://www.omdbapi.com/apikey.aspx .")
+            return None
+
         # Don't care about query strings
         if "?" in url:
             url = url.split("?")[0]
@@ -840,7 +845,7 @@ class SpiffyTitles(callbacks.Plugin):
         # We can only accommodate a specific format of URL here
         if "/title/" in url:
             imdb_id = url.split("/title/")[1].rstrip("/")
-            omdb_url = "http://www.omdbapi.com/?i=%s&plot=short&r=json&tomatoes=true" % (imdb_id)
+            omdb_url = "http://www.omdbapi.com/?i=%s&apikey=%s&plot=short&r=json&tomatoes=true" % (imdb_id, imdb_key)
 
             try:
                 request = requests.get(omdb_url, timeout=10, headers=headers)

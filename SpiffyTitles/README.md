@@ -120,6 +120,8 @@ Queries the [OMDB API](http://www.omdbapi.com) to get additional information abo
 
 `imdbHandlerEnabled` - Whether to show additional information about [IMDB](http://imdb.com) links
 
+`imdbKey` - Omdb key used for imdb - Get one at [OMDBAPI](https://www.omdbapi.com/apikey.aspx)
+
 `imdbTemplate` - This is the template used for [IMDB](http://imdb.com) links
 
 Default value: `^ {{Title}} ({{Year}}, {{Country}}) - Rating: {{imdbRating}} ::  {{Plot}}`

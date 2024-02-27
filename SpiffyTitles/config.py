@@ -138,6 +138,10 @@ conf.registerChannelValue(SpiffyTitles, 'imgurAlbumTemplate',
 conf.registerGlobalValue(SpiffyTitles, 'youtubeDeveloperKey',
                         registry.String("", _("""Youtube developer key - required for Youtube handler."""), private=True))
 
+# Omdb API
+conf.registerGlobalValue(SpiffyTitles, 'imdbKey',
+                        registry.String("", _("""Omdb API key - required for Imdb handler."""), private=True))
+
 # Link cache lifetime
 conf.registerGlobalValue(SpiffyTitles, 'linkCacheLifetimeInSeconds',
                         registry.Integer(60, _("""Link cache lifetime in seconds""")))
